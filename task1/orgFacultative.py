@@ -38,6 +38,8 @@ class Student:
 
     @staticmethod
     def validate_address(address):
+        if address is None:
+            return None
         if not isinstance(address, str):
             raise ValueError("Address must be a string")
         address = address.strip()
