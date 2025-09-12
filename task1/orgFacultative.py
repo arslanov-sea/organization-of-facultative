@@ -1,6 +1,77 @@
 import json
 
 
+class Person:
+    def __init__(self, first_name, last_name, patronymic, address):
+        self._first_name = self.validate_name(first_name)
+        self._last_name = self.validate_name(last_name)
+        self._patronymic = self.validate_name(patronymic, True)
+        self._address = self.validate_address(address)
+
+    @staticmethod
+    def validate_name(value, is_patronymic=False):
+        if is_patronymic:
+            if value is None:
+                return None
+            if not isinstance(value, str):
+                raise ValueError("Patronymic must be None or a string")
+            if len(value.strip()) == 0:
+                return None
+            return value.strip()
+        else:
+            if not isinstance(value, str) or len(value.strip()) == 0:
+                raise ValueError("name must be a non-empty string")
+            return value.strip()
+
+    @staticmethod
+    def validate_address(address):
+        if not isinstance(address, str):
+            raise ValueError("Address must be a string")
+
+        address = address.strip()
+
+        if len(address) == 0:
+            raise ValueError("Address cannot be empty")
+
+        if len(address) < 10:
+            raise ValueError("Address is too short to be valid")
+
+        address_lower = address.lower()
+        address_keywords = ['ул.', 'улица', 'д.', 'дом', 'кв.', 'квартира', 'пр.', 'проспект']
+
+        if not any(keyword in address_lower for keyword in address_keywords):
+            raise ValueError("Address should contain typical address components (ул., д., кв., etc.)")
+
+        return address
+
+    @property
+    def first_name(self):
+        return self._first_name
+
+    @property
+    def last_name(self):
+        return self._last_name
+
+    @property
+    def address(self):
+        return self._address
+
+    @first_name.setter
+    def first_name(self, value):
+        self._first_name = self.validate_name(value)
+
+    @last_name.setter
+    def last_name(self, value):
+        self._last_name = self.validate_name(value)
+
+    @address.setter
+    def address(self, value):
+        self._address = self.validate_address(value)
+
+    def __str__(self):
+        return f"Person({self._last_name} {self._first_name}, {self._address})"
+
+
 class Student:
     def __init__(self, *args, **kwargs):
         if len(args) == 1:
