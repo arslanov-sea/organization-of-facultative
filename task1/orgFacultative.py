@@ -55,6 +55,9 @@ class Student:
 
     @staticmethod
     def validate_phone(phone):
+        if phone is None:
+            return None
+            
         if not isinstance(phone, str):
             raise ValueError("Phone must be a string")
 
