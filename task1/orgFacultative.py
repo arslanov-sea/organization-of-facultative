@@ -6,9 +6,9 @@ class Student:
         if len(args) == 1:
             arg = args[0]
             if isinstance(arg, str):
-                if arg.startswith('{') and arg.endswith('}'):  # JSON
+                if arg.startswith('{') and arg.endswith('}'):
                     data = self._parse_json(arg)
-                else:  # Строка
+                else:
                     data = self._parse_string(arg)
             elif isinstance(arg, tuple):
                 data = self._parse_tuple(arg)
@@ -159,6 +159,32 @@ class Student:
         if not isinstance(hours, int) or hours < 0:
             raise ValueError("only non-negative integer")
         return hours
+
+    def info(self):
+        full_name = f"{self._last_name} {self._first_name} {self._patronymic}" if self._patronymic else f"{self._last_name} {self._first_name}"
+        return (f"Полная информация о студенте:\n"
+                f"ID: {self._student_id}\n"
+                f"ФИО: {full_name}\n"
+                f"Адрес: {self._address}\n"
+                f"Телефон: {self._phone}\n"
+                f"Обязательные факультативные часы: {self._min_required_facultative_hours}")
+
+    def brief_info(self):
+        return f"{self._last_name} {self._first_name} {self._patronymic}" if self._patronymic else f"{self._last_name} {self._first_name}"
+
+    def __str__(self):
+        return self.brief_info()
+
+    def __eq__(self, other):
+        if not isinstance(other, Student):
+            return False
+        return (self._student_id == other._student_id and
+                self._first_name == other._first_name and
+                self._last_name == other._last_name and
+                self._patronymic == other._patronymic and
+                self._address == other._address and
+                self._phone == other._phone and
+                self._min_required_facultative_hours == other._min_required_facultative_hours)
 
     @property
     def student_id(self):
