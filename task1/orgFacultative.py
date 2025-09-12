@@ -1,9 +1,9 @@
 class Student:
     def __init__(self, student_id, first_name, last_name, patronymic, address, phone, min_required_facultative_hours=0):
         self._student_id = self.validate_id(student_id)
-        self._first_name = self.validate_first_name(first_name)
-        self._last_name = self.validate_last_name(last_name)
-        self._patronymic = self.validate_patronymic(patronymic)
+        self._first_name = self.validate_name(first_name)
+        self._last_name = self.validate_name(last_name)
+        self._patronymic = self.validate_name(patronymic, True)
         self._address = self.validate_address(address)
         self._phone = self.validate_phone(phone)
         self._min_required_facultative_hours = self.validate_min_required_facultative_hours(min_required_facultative_hours)
@@ -15,26 +15,19 @@ class Student:
         return student_id
 
     @staticmethod
-    def validate_last_name(last_name):
-        if not isinstance(last_name, str) or len(last_name.strip()) == 0:
-            raise ValueError("only non-empty string")
-        return last_name.strip()
-
-    @staticmethod
-    def validate_first_name(first_name):
-        if not isinstance(first_name, str) or len(first_name.strip()) == 0:
-            raise ValueError("only non-empty string")
-        return first_name.strip()
-
-    @staticmethod
-    def validate_patronymic(patronymic):
-        if patronymic is None:
-            return None
-        if not isinstance(patronymic, str):
-            raise ValueError("only None or a string")
-        if len(patronymic.strip()) == 0:
-            return None
-        return patronymic.strip()
+    def validate_name(value, is_patronymic=False):
+        if is_patronymic:
+            if value is None:
+                return None
+            if not isinstance(value, str):
+                raise ValueError("Patronymic must be None or a string")
+            if len(value.strip()) == 0:
+                return None
+            return value.strip()
+        else:
+            if not isinstance(value, str) or len(value.strip()) == 0:
+                raise ValueError("name must be a non-empty string")
+            return value.strip()
 
     @staticmethod
     def validate_address(address):
@@ -57,7 +50,7 @@ class Student:
     def validate_phone(phone):
         if phone is None:
             return None
-            
+
         if not isinstance(phone, str):
             raise ValueError("Phone must be a string")
 
@@ -95,7 +88,7 @@ class Student:
 
     @first_name.setter
     def first_name(self, value):
-        self._first_name = self.validate_first_name(value)
+        self._first_name = self.validate_name(value)
 
     @property
     def last_name(self):
@@ -103,7 +96,7 @@ class Student:
 
     @last_name.setter
     def last_name(self, value):
-        self._last_name = self.validate_last_name(value)
+        self._last_name = self.validate_name(value)
 
     @property
     def patronymic(self):
@@ -111,7 +104,7 @@ class Student:
 
     @patronymic.setter
     def patronymic(self, value):
-        self._patronymic = self.validate_patronymic(value)
+        self._patronymic = self.validate_name(value, True)
 
     @property
     def address(self):
