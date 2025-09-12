@@ -1,12 +1,98 @@
+import json
+
+
 class Student:
-    def __init__(self, student_id, first_name, last_name, patronymic, address, phone, min_required_facultative_hours=0):
-        self._student_id = self.validate_id(student_id)
-        self._first_name = self.validate_name(first_name)
-        self._last_name = self.validate_name(last_name)
-        self._patronymic = self.validate_name(patronymic, True)
-        self._address = self.validate_address(address)
-        self._phone = self.validate_phone(phone)
-        self._min_required_facultative_hours = self.validate_min_required_facultative_hours(min_required_facultative_hours)
+    def __init__(self, *args, **kwargs):
+        if len(args) == 1:
+            arg = args[0]
+            if isinstance(arg, str):
+                if arg.startswith('{') and arg.endswith('}'):  # JSON
+                    data = self._parse_json(arg)
+                else:  # Строка
+                    data = self._parse_string(arg)
+            elif isinstance(arg, tuple):
+                data = self._parse_tuple(arg)
+            else:
+                raise ValueError("Unsupported argument type")
+        elif len(args) == 7:
+            data = {
+                'student_id': args[0],
+                'first_name': args[1],
+                'last_name': args[2],
+                'patronymic': args[3],
+                'address': args[4],
+                'phone': args[5],
+                'min_required_facultative_hours': args[6]
+            }
+        elif kwargs:
+            data = kwargs
+        else:
+            raise ValueError("Invalid arguments")
+
+        self._student_id = self.validate_id(data['student_id'])
+        self._first_name = self.validate_name(data['first_name'])
+        self._last_name = self.validate_name(data['last_name'])
+        self._patronymic = self.validate_name(data.get('patronymic'), True)
+        self._address = self.validate_address(data['address'])
+        self._phone = self.validate_phone(data['phone'])
+        self._min_required_facultative_hours = self.validate_min_required_facultative_hours(
+            data.get('min_required_facultative_hours', 0)
+        )
+
+    @staticmethod
+    def _parse_string(input_string):
+        parts = input_string.split(';')
+        if len(parts) != 7:
+            raise ValueError("String must contain exactly 7 parts separated by ';'")
+
+        try:
+            return {
+                'student_id': int(parts[0]),
+                'first_name': parts[1],
+                'last_name': parts[2],
+                'patronymic': parts[3],
+                'address': parts[4],
+                'phone': parts[5],
+                'min_required_facultative_hours': int(parts[6])
+            }
+        except ValueError as e:
+            raise ValueError(f"Invalid data format in string: {e}")
+
+    @staticmethod
+    def _parse_json(input_json):
+        try:
+            data = json.loads(input_json)
+            return {
+                'student_id': data['student_id'],
+                'first_name': data['first_name'],
+                'last_name': data['last_name'],
+                'patronymic': data.get('patronymic'),
+                'address': data['address'],
+                'phone': data['phone'],
+                'min_required_facultative_hours': data.get('min_required_facultative_hours', 0)
+            }
+        except json.JSONDecodeError:
+            raise ValueError("Invalid JSON format")
+        except KeyError as e:
+            raise ValueError(f"Missing required field in JSON: {e}")
+
+    @staticmethod
+    def _parse_tuple(input_tuple):
+        if len(input_tuple) != 7:
+            raise ValueError("Tuple must contain exactly 7 elements")
+
+        try:
+            return {
+                'student_id': int(input_tuple[0]),
+                'first_name': input_tuple[1],
+                'last_name': input_tuple[2],
+                'patronymic': input_tuple[3],
+                'address': input_tuple[4],
+                'phone': input_tuple[5],
+                'min_required_facultative_hours': int(input_tuple[6])
+            }
+        except ValueError as e:
+            raise ValueError(f"Invalid data format in tuple: {e}")
 
     @staticmethod
     def validate_id(student_id):
@@ -80,7 +166,7 @@ class Student:
 
     @student_id.setter
     def student_id(self, value):
-        self.student_id = self.validate_id(value)
+        self._student_id = self.validate_id(value)
 
     @property
     def first_name(self):
