@@ -72,7 +72,7 @@ class Person:
         return f"Person({self._last_name} {self._first_name}, {self._address})"
 
 
-class Student:
+class Student(Person):
     def __init__(self, *args, **kwargs):
         if len(args) == 1:
             arg = args[0]
@@ -100,11 +100,9 @@ class Student:
         else:
             raise ValueError("Invalid arguments")
 
+        super().__init__(data['first_name'], data['last_name'], data.get('patronymic'), data['address'])
+
         self._student_id = self.validate_id(data['student_id'])
-        self._first_name = self.validate_name(data['first_name'])
-        self._last_name = self.validate_name(data['last_name'])
-        self._patronymic = self.validate_name(data.get('patronymic'), True)
-        self._address = self.validate_address(data['address'])
         self._phone = self.validate_phone(data['phone'])
         self._min_required_facultative_hours = self.validate_min_required_facultative_hours(
             data.get('min_required_facultative_hours', 0)
@@ -172,38 +170,6 @@ class Student:
         return student_id
 
     @staticmethod
-    def validate_name(value, is_patronymic=False):
-        if is_patronymic:
-            if value is None:
-                return None
-            if not isinstance(value, str):
-                raise ValueError("Patronymic must be None or a string")
-            if len(value.strip()) == 0:
-                return None
-            return value.strip()
-        else:
-            if not isinstance(value, str) or len(value.strip()) == 0:
-                raise ValueError("name must be a non-empty string")
-            return value.strip()
-
-    @staticmethod
-    def validate_address(address):
-        if address is None:
-            return None
-        if not isinstance(address, str):
-            raise ValueError("Address must be a string")
-        address = address.strip()
-        if len(address) == 0:
-            raise ValueError("Address cannot be empty")
-        if len(address) < 10:
-            raise ValueError("Address is too short to be valid")
-        address_lower = address.lower()
-        address_keywords = ['ул.', 'улица', 'д.', 'дом', 'кв.', 'квартира', 'пр.', 'проспект']
-        if not any(keyword in address_lower for keyword in address_keywords):
-            raise ValueError("Address should contain typical address components (ул., д., кв., etc.)")
-        return address
-
-    @staticmethod
     def validate_phone(phone):
         if phone is None:
             return None
@@ -266,36 +232,12 @@ class Student:
         self._student_id = self.validate_id(value)
 
     @property
-    def first_name(self):
-        return self._first_name
-
-    @first_name.setter
-    def first_name(self, value):
-        self._first_name = self.validate_name(value)
-
-    @property
-    def last_name(self):
-        return self._last_name
-
-    @last_name.setter
-    def last_name(self, value):
-        self._last_name = self.validate_name(value)
-
-    @property
     def patronymic(self):
         return self._patronymic
 
     @patronymic.setter
     def patronymic(self, value):
         self._patronymic = self.validate_name(value, True)
-
-    @property
-    def address(self):
-        return self._address
-
-    @address.setter
-    def address(self, value):
-        self._address = self.validate_address(value)
 
     @property
     def phone(self):
