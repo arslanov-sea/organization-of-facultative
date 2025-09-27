@@ -1,15 +1,15 @@
 import json
-
+import re
 
 class Person:
-    def __init__(self, first_name, last_name, patronymic, address):
+    def __init__(self, first_name: str, last_name: str, patronymic: str | None, address: str):
         self._first_name = self.validate_name(first_name)
         self._last_name = self.validate_name(last_name)
         self._patronymic = self.validate_name(patronymic, True)
         self._address = self.validate_address(address)
 
     @staticmethod
-    def validate_name(value, is_patronymic=False):
+    def validate_name(value: str | None, is_patronymic: bool = False) -> str | None:
         if is_patronymic:
             if value is None:
                 return None
@@ -17,58 +17,68 @@ class Person:
                 raise ValueError("Patronymic must be None or a string")
             if len(value.strip()) == 0:
                 return None
-            return value.strip()
+            value = value.strip()
         else:
             if not isinstance(value, str) or len(value.strip()) == 0:
                 raise ValueError("name must be a non-empty string")
-            return value.strip()
+            value = value.strip()
+
+        if value is not None:
+            if not re.match(r'^[A-Za-zА-Яа-я]+(?:-[A-Za-zА-Яа-я]+)*$', value):
+                raise ValueError("Invalid name format")
+            value = value.title()
+
+        return value
 
     @staticmethod
-    def validate_address(address):
-        if not isinstance(address, str):
-            raise ValueError("Address must be a string")
+    def validate_address(address: str) -> str:
+        if not isinstance(address, str) or not address.strip():
+            raise ValueError("Address must be a non-empty string")
 
         address = address.strip()
+        region_types = [r'Респ\.', r'Край', r'Обл\.']
+        location_types = [r'г\.', r'с\.', r'ст-ца', r'а\.']
 
-        if len(address) == 0:
-            raise ValueError("Address cannot be empty")
+        found_regions = [r for r in region_types if re.search(r, address, re.IGNORECASE)]
+        found_locations = [l for l in location_types if re.search(l, address, re.IGNORECASE)]
 
-        if len(address) < 10:
-            raise ValueError("Address is too short to be valid")
+        if len(found_regions) > 1:
+            raise ValueError(f"Адрес не может содержать одновременно {', '.join(found_regions)}")
+        if len(found_locations) > 1:
+            raise ValueError(f"Адрес не может содержать одновременно {', '.join(found_locations)}")
 
-        address_lower = address.lower()
-        address_keywords = ['ул.', 'улица', 'д.', 'дом', 'кв.', 'квартира', 'пр.', 'проспект']
-
-        if not any(keyword in address_lower for keyword in address_keywords):
-            raise ValueError("Address should contain typical address components (ул., д., кв., etc.)")
+        if not re.search(r'(ул\.|улица|пр\.|проспект|бульвар|б-р|переулок|пер\.|аллея|шоссе)', address, re.IGNORECASE):
+            raise ValueError("Адрес должен содержать указание улицы")
+        if not re.search(r'(д\.|дом)\s*\d+', address, re.IGNORECASE):
+            raise ValueError("Адрес должен содержать номер дома")
 
         return address
 
     @property
-    def first_name(self):
+    def first_name(self) -> str:
         return self._first_name
 
     @property
-    def last_name(self):
+    def last_name(self) -> str:
         return self._last_name
 
     @property
-    def address(self):
+    def address(self) -> str:
         return self._address
 
     @first_name.setter
-    def first_name(self, value):
+    def first_name(self, value: str) -> None:
         self._first_name = self.validate_name(value)
 
     @last_name.setter
-    def last_name(self, value):
+    def last_name(self, value: str) -> None:
         self._last_name = self.validate_name(value)
 
     @address.setter
-    def address(self, value):
+    def address(self, value: str) -> None:
         self._address = self.validate_address(value)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Person({self._last_name} {self._first_name}, {self._address})"
 
 
@@ -109,7 +119,7 @@ class Student(Person):
         )
 
     @staticmethod
-    def _parse_string(input_string):
+    def _parse_string(input_string: str) -> dict:
         parts = input_string.split(';')
         if len(parts) != 7:
             raise ValueError("String must contain exactly 7 parts separated by ';'")
@@ -128,7 +138,7 @@ class Student(Person):
             raise ValueError(f"Invalid data format in string: {e}")
 
     @staticmethod
-    def _parse_json(input_json):
+    def _parse_json(input_json: str) -> dict:
         try:
             data = json.loads(input_json)
             return {
@@ -146,7 +156,7 @@ class Student(Person):
             raise ValueError(f"Missing required field in JSON: {e}")
 
     @staticmethod
-    def _parse_tuple(input_tuple):
+    def _parse_tuple(input_tuple: tuple) -> dict:
         if len(input_tuple) != 7:
             raise ValueError("Tuple must contain exactly 7 elements")
 
@@ -164,13 +174,13 @@ class Student(Person):
             raise ValueError(f"Invalid data format in tuple: {e}")
 
     @staticmethod
-    def validate_id(student_id):
+    def validate_id(student_id: int) -> int:
         if not isinstance(student_id, int) or student_id <= 0:
             raise ValueError("only positive integer")
         return student_id
 
     @staticmethod
-    def validate_phone(phone):
+    def validate_phone(phone: str | None) -> str | None:
         if phone is None:
             return None
 
@@ -179,25 +189,18 @@ class Student(Person):
 
         phone = phone.strip()
 
-        if not phone.startswith('+'):
-            raise ValueError("Phone number must start with '+'")
-
-        if len(phone) != 12:
-            raise ValueError("Phone number must contain '+' followed by exactly 11 digits")
-
-        digits_part = phone[1:]
-        if not digits_part.isdigit():
-            raise ValueError("Phone number must contain only digits after '+'")
+        if not re.match(r'^\+7\d{10}$', phone):
+            raise ValueError("Phone must start with +7 followed by exactly 10 digits")
 
         return phone
 
     @staticmethod
-    def validate_min_required_facultative_hours(hours):
+    def validate_min_required_facultative_hours(hours: int) -> int:
         if not isinstance(hours, int) or hours < 0:
             raise ValueError("only non-negative integer")
         return hours
 
-    def info(self):
+    def info(self) -> str:
         full_name = f"{self._last_name} {self._first_name} {self._patronymic}" if self._patronymic else f"{self._last_name} {self._first_name}"
         return (f"Полная информация о студенте:\n"
                 f"ID: {self._student_id}\n"
@@ -206,13 +209,13 @@ class Student(Person):
                 f"Телефон: {self._phone}\n"
                 f"Обязательные факультативные часы: {self._min_required_facultative_hours}")
 
-    def brief_info(self):
+    def brief_info(self) -> str:
         return f"{self._last_name} {self._first_name} {self._patronymic}" if self._patronymic else f"{self._last_name} {self._first_name}"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.brief_info()
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if not isinstance(other, Student):
             return False
         return (self._student_id == other._student_id and
@@ -224,33 +227,33 @@ class Student(Person):
                 self._min_required_facultative_hours == other._min_required_facultative_hours)
 
     @property
-    def student_id(self):
+    def student_id(self) -> int:
         return self._student_id
 
     @student_id.setter
-    def student_id(self, value):
+    def student_id(self, value: int) -> None:
         self._student_id = self.validate_id(value)
 
     @property
-    def patronymic(self):
+    def patronymic(self) -> str | None:
         return self._patronymic
 
     @patronymic.setter
-    def patronymic(self, value):
+    def patronymic(self, value: str | None) -> None:
         self._patronymic = self.validate_name(value, True)
 
     @property
-    def phone(self):
+    def phone(self) -> str | None:
         return self._phone
 
     @phone.setter
-    def phone(self, value):
+    def phone(self, value: str | None) -> None:
         self._phone = self.validate_phone(value)
 
     @property
-    def min_required_facultative_hours(self):
+    def min_required_facultative_hours(self) -> int:
         return self._min_required_facultative_hours
 
     @min_required_facultative_hours.setter
-    def min_required_facultative_hours(self, value):
+    def min_required_facultative_hours(self, value: int) -> None:
         self._min_required_facultative_hours = self.validate_min_required_facultative_hours(value)
