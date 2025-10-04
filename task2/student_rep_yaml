@@ -1,0 +1,119 @@
+import yaml
+from typing import List
+from student import Student
+
+
+class StudentRepYaml:
+    def __init__(self, filename: str):
+        self._filename = filename
+        self._students = []
+        self._load()
+
+    def _load(self) -> None:
+        try:
+            with open(self._filename, 'r', encoding='utf-8') as file:
+                data = yaml.safe_load(file) or []
+                self._students = []
+                for item in data:
+                    try:
+                        student = Student(
+                            student_id=item['student_id'],
+                            first_name=item['first_name'],
+                            last_name=item['last_name'],
+                            patronymic=item.get('patronymic'),
+                            address=item['address'],
+                            phone=item['phone'],
+                            min_required_facultative_hours=item.get('min_required_facultative_hours', 0)
+                        )
+                        self._students.append(student)
+                    except (ValueError, KeyError) as e:
+                        print(f"Ошибка при загрузке студента: {e}")
+        except FileNotFoundError:
+            self._students = []
+
+    def _save(self) -> None:
+        data = []
+        for student in self._students:
+            student_data = {
+                'student_id': student.student_id,
+                'first_name': student.first_name,
+                'last_name': student.last_name,
+                'patronymic': student.patronymic,
+                'address': student.address,
+                'phone': student.phone,
+                'min_required_facultative_hours': student.min_required_facultative_hours
+            }
+            data.append(student_data)
+
+        with open(self._filename, 'w', encoding='utf-8') as file:
+            yaml.dump(data, file, allow_unicode=True, default_flow_style=False)
+
+    def read_all(self) -> List[Student]:
+        return self._students.copy()
+
+    def write_all(self, students: List[Student]) -> None:
+        self._students = students.copy()
+        self._save()
+
+    def get_by_id(self, student_id: int) -> Student | None:
+        for student in self._students:
+            if student.student_id == student_id:
+                return student
+        return None
+
+    def get_k_n_short_list(self, k: int, n: int) -> List[Student]:
+        start_index = (n - 1) * k
+        end_index = start_index + k
+        return self._students[start_index:end_index] if start_index < len(self._students) else []
+
+    def sort_by_name(self) -> List[Student]:
+        self._students.sort(key=lambda x: (
+            x.last_name,
+            x.first_name,
+            x.patronymic if x.patronymic else ""
+        ))
+        self._save()
+        return self._students.copy()
+
+    def add_student(self, student_data: dict) -> Student:
+        new_id = max([s.student_id for s in self._students] or [0]) + 1
+        student = Student(
+            student_id=new_id,
+            first_name=student_data['first_name'],
+            last_name=student_data['last_name'],
+            patronymic=student_data.get('patronymic'),
+            address=student_data['address'],
+            phone=student_data.get('phone'),
+            min_required_facultative_hours=student_data.get('min_required_facultative_hours', 0)
+        )
+        self._students.append(student)
+        self._save()
+        return student
+
+    def update_student(self, student_id: int, student_data: dict) -> Student | None:
+        for i, student in enumerate(self._students):
+            if student.student_id == student_id:
+                updated_student = Student(
+                    student_id=student_id,
+                    first_name=student_data['first_name'],
+                    last_name=student_data['last_name'],
+                    patronymic=student_data.get('patronymic'),
+                    address=student_data['address'],
+                    phone=student_data.get('phone'),
+                    min_required_facultative_hours=student_data.get('min_required_facultative_hours', 0)
+                )
+                self._students[i] = updated_student
+                self._save()
+                return updated_student
+        return None
+
+    def delete_student(self, student_id: int) -> bool:
+        for i, student in enumerate(self._students):
+            if student.student_id == student_id:
+                del self._students[i]
+                self._save()
+                return True
+        return False
+
+    def get_count(self) -> int:
+        return len(self._students)
