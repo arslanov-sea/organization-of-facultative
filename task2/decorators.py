@@ -31,3 +31,33 @@ class StudentRepDBDecorator:
             students = list(filter(self._filter_func, students))
 
         return len(students)
+
+
+
+class StudentRepFileDecorator:
+    def __init__(self, file_repo, filter_func: Callable[[Student], bool] = None,
+                 sort_key: Callable[[Student], any] = None):
+        self._file_repo = file_repo
+        self._filter_func = filter_func
+        self._sort_key = sort_key
+
+    def get_k_n_short_list(self, k: int, n: int) -> List[Student]:
+        students = self._file_repo.read_all()
+
+        if self._filter_func:
+            students = list(filter(self._filter_func, students))
+
+        if self._sort_key:
+            students.sort(key=self._sort_key)
+
+        start_index = (n - 1) * k
+        end_index = start_index + k
+        return students[start_index:end_index] if start_index < len(students) else []
+
+    def get_count(self) -> int:
+        students = self._file_repo.read_all()
+
+        if self._filter_func:
+            students = list(filter(self._filter_func, students))
+
+        return len(students)
