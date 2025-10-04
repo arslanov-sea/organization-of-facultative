@@ -1,7 +1,5 @@
 from typing import List, Callable
 from student import Student
-from student_repository import *
-from student_rep_db import StudentRepDB
 
 
 class StudentRepDBDecorator:
