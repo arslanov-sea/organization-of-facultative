@@ -1,0 +1,177 @@
+import psycopg2
+from typing import List
+from student import Student
+
+
+class StudentRepDB:
+    def __init__(self, db_name: str, host: str,
+                 port: int, user: str, password: str):
+        self._db_name = db_name
+        self._host = host
+        self._port = port
+        self._user = user
+        self._password = password
+        self._create_table()
+
+    def _get_connection(self):
+        return psycopg2.connect(
+            dbname=self._db_name,
+            host=self._host,
+            port=self._port,
+            user=self._user,
+            password=self._password
+        )
+
+    def _create_table(self) -> None:
+        conn = self._get_connection()
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS students (
+                        student_id SERIAL PRIMARY KEY,
+                        first_name VARCHAR(100) NOT NULL,
+                        last_name VARCHAR(100) NOT NULL,
+                        patronymic VARCHAR(100),
+                        address TEXT NOT NULL,
+                        phone VARCHAR(20),
+                        min_required_facultative_hours INTEGER DEFAULT 0
+                    )
+                """)
+                conn.commit()
+        finally:
+            conn.close()
+
+    def get_by_id(self, student_id: int) -> Student | None:
+        conn = self._get_connection()
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute("""
+                    SELECT student_id, first_name, last_name, patronymic, 
+                           address, phone, min_required_facultative_hours 
+                    FROM students WHERE student_id = %s
+                """, (student_id,))
+                row = cursor.fetchone()
+                if row:
+                    return Student(
+                        student_id=row[0],
+                        first_name=row[1],
+                        last_name=row[2],
+                        patronymic=row[3],
+                        address=row[4],
+                        phone=row[5],
+                        min_required_facultative_hours=row[6]
+                    )
+                return None
+        finally:
+            conn.close()
+
+    def get_k_n_short_list(self, k: int, n: int) -> List[Student]:
+        conn = self._get_connection()
+        try:
+            with conn.cursor() as cursor:
+                offset = (n - 1) * k
+                cursor.execute("""
+                    SELECT student_id, first_name, last_name, patronymic, 
+                           address, phone, min_required_facultative_hours 
+                    FROM students ORDER BY student_id LIMIT %s OFFSET %s
+                """, (k, offset))
+                students = []
+                for row in cursor.fetchall():
+                    students.append(Student(
+                        student_id=row[0],
+                        first_name=row[1],
+                        last_name=row[2],
+                        patronymic=row[3],
+                        address=row[4],
+                        phone=row[5],
+                        min_required_facultative_hours=row[6]
+                    ))
+                return students
+        finally:
+            conn.close()
+
+    def add_student(self, student_data: dict) -> Student:
+        conn = self._get_connection()
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute("""
+                    INSERT INTO students (first_name, last_name, patronymic, 
+                                         address, phone, min_required_facultative_hours)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                    RETURNING student_id
+                """, (
+                    student_data['first_name'],
+                    student_data['last_name'],
+                    student_data.get('patronymic'),
+                    student_data['address'],
+                    student_data.get('phone'),
+                    student_data.get('min_required_facultative_hours', 0)
+                ))
+                new_id = cursor.fetchone()[0]
+                conn.commit()
+
+                return Student(
+                    student_id=new_id,
+                    first_name=student_data['first_name'],
+                    last_name=student_data['last_name'],
+                    patronymic=student_data.get('patronymic'),
+                    address=student_data['address'],
+                    phone=student_data.get('phone'),
+                    min_required_facultative_hours=student_data.get('min_required_facultative_hours', 0)
+                )
+        finally:
+            conn.close()
+
+    def update_student(self, student_id: int, student_data: dict) -> Student | None:
+        conn = self._get_connection()
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute("""
+                    UPDATE students 
+                    SET first_name = %s, last_name = %s, patronymic = %s,
+                        address = %s, phone = %s, min_required_facultative_hours = %s
+                    WHERE student_id = %s
+                    RETURNING student_id
+                """, (
+                    student_data['first_name'],
+                    student_data['last_name'],
+                    student_data.get('patronymic'),
+                    student_data['address'],
+                    student_data.get('phone'),
+                    student_data.get('min_required_facultative_hours', 0),
+                    student_id
+                ))
+                if cursor.fetchone():
+                    conn.commit()
+                    return Student(
+                        student_id=student_id,
+                        first_name=student_data['first_name'],
+                        last_name=student_data['last_name'],
+                        patronymic=student_data.get('patronymic'),
+                        address=student_data['address'],
+                        phone=student_data.get('phone'),
+                        min_required_facultative_hours=student_data.get('min_required_facultative_hours', 0)
+                    )
+                return None
+        finally:
+            conn.close()
+
+    def delete_student(self, student_id: int) -> bool:
+        conn = self._get_connection()
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute("DELETE FROM students WHERE student_id = %s", (student_id,))
+                deleted = cursor.rowcount > 0
+                conn.commit()
+                return deleted
+        finally:
+            conn.close()
+
+    def get_count(self) -> int:
+        conn = self._get_connection()
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute("SELECT COUNT(*) FROM students")
+                return cursor.fetchone()[0]
+        finally:
+            conn.close()
