@@ -1,40 +1,46 @@
+"""
+Модуль для работы с репозиторием студентов.
+Поддерживает сохранение и загрузку данных в форматах JSON и YAML.
+"""
+
 import json
-import yaml
 from typing import List
+import yaml
 from student import Student
 
 
 class StudentRepository:
+    """Базовый класс репозитория для управления данными студентов."""
+
     def __init__(self, filename: str):
+        """Инициализирует репозиторий с указанным именем файла."""
         self._filename = filename
         self._students = []
         self._load()
 
     def _load(self) -> None:
+        """Загружает данные из файла."""
         raise NotImplementedError
 
     def _save(self) -> None:
+        """Сохраняет данные в файл."""
         raise NotImplementedError
 
-    def read_all(self) -> List[Student]:
-        return self._students.copy()
-
-    def write_all(self, students: List[Student]) -> None:
-        self._students = students.copy()
-        self._save()
-
     def get_by_id(self, student_id: int) -> Student | None:
+        """Находит студента по ID."""
         for student in self._students:
             if student.student_id == student_id:
                 return student
         return None
 
     def get_k_n_short_list(self, k: int, n: int) -> List[Student]:
+        """Возвращает короткий список из k элементов на n-й странице."""
         start_index = (n - 1) * k
         end_index = start_index + k
         return self._students[start_index:end_index] if start_index < len(self._students) else []
 
     def sort_by_name(self) -> List[Student]:
+        """Сортирует студентов по ФИО и сохраняет изменения."""
         self._students.sort(key=lambda x: (
             x.last_name,
             x.first_name,
@@ -44,6 +50,7 @@ class StudentRepository:
         return self._students.copy()
 
     def add_student(self, student_data: dict) -> Student:
+        """Добавляет нового студента."""
         new_id = max([s.student_id for s in self._students] or [0]) + 1
         student = Student(
             student_id=new_id,
@@ -52,13 +59,16 @@ class StudentRepository:
             patronymic=student_data.get('patronymic'),
             address=student_data['address'],
             phone=student_data.get('phone'),
-            min_required_facultative_hours=student_data.get('min_required_facultative_hours', 0)
+            min_required_facultative_hours=student_data.get(
+                'min_required_facultative_hours', 0
+            )
         )
         self._students.append(student)
         self._save()
         return student
 
     def update_student(self, student_id: int, student_data: dict) -> Student | None:
+        """Обновляет данные студента по ID."""
         for i, student in enumerate(self._students):
             if student.student_id == student_id:
                 updated_student = Student(
@@ -68,7 +78,9 @@ class StudentRepository:
                     patronymic=student_data.get('patronymic'),
                     address=student_data['address'],
                     phone=student_data.get('phone'),
-                    min_required_facultative_hours=student_data.get('min_required_facultative_hours', 0)
+                    min_required_facultative_hours=student_data.get(
+                        'min_required_facultative_hours', 0
+                    )
                 )
                 self._students[i] = updated_student
                 self._save()
@@ -76,6 +88,7 @@ class StudentRepository:
         return None
 
     def delete_student(self, student_id: int) -> bool:
+        """Удаляет студента по ID."""
         for i, student in enumerate(self._students):
             if student.student_id == student_id:
                 del self._students[i]
@@ -84,11 +97,15 @@ class StudentRepository:
         return False
 
     def get_count(self) -> int:
+        """Возвращает количество студентов."""
         return len(self._students)
 
 
 class StudentRepJson(StudentRepository):
+    """Реализация репозитория для работы с JSON файлами."""
+
     def _load(self) -> None:
+        """Загружает данные из JSON файла."""
         try:
             with open(self._filename, 'r', encoding='utf-8') as file:
                 data = json.load(file)
@@ -102,7 +119,9 @@ class StudentRepJson(StudentRepository):
                             patronymic=item.get('patronymic'),
                             address=item['address'],
                             phone=item['phone'],
-                            min_required_facultative_hours=item.get('min_required_facultative_hours', 0)
+                            min_required_facultative_hours=item.get(
+                                'min_required_facultative_hours', 0
+                            )
                         )
                         self._students.append(student)
                     except (ValueError, KeyError) as e:
@@ -113,6 +132,7 @@ class StudentRepJson(StudentRepository):
             self._students = []
 
     def _save(self) -> None:
+        """Сохраняет данные в JSON файл."""
         data = []
         for student in self._students:
             student_data = {
@@ -131,7 +151,10 @@ class StudentRepJson(StudentRepository):
 
 
 class StudentRepYaml(StudentRepository):
+    """Реализация репозитория для работы с YAML файлами."""
+
     def _load(self) -> None:
+        """Загружает данные из YAML файла."""
         try:
             with open(self._filename, 'r', encoding='utf-8') as file:
                 data = yaml.safe_load(file) or []
@@ -145,7 +168,9 @@ class StudentRepYaml(StudentRepository):
                             patronymic=item.get('patronymic'),
                             address=item['address'],
                             phone=item['phone'],
-                            min_required_facultative_hours=item.get('min_required_facultative_hours', 0)
+                            min_required_facultative_hours=item.get(
+                                'min_required_facultative_hours', 0
+                            )
                         )
                         self._students.append(student)
                     except (ValueError, KeyError) as e:
@@ -154,6 +179,7 @@ class StudentRepYaml(StudentRepository):
             self._students = []
 
     def _save(self) -> None:
+        """Сохраняет данные в YAML файл."""
         data = []
         for student in self._students:
             student_data = {
@@ -169,3 +195,84 @@ class StudentRepYaml(StudentRepository):
 
         with open(self._filename, 'w', encoding='utf-8') as file:
             yaml.dump(data, file, allow_unicode=True, default_flow_style=False)
+
+
+# # Создание репозиториев разных типов
+# json_repo = StudentRepJson("data/students.json")
+# yaml_repo = StudentRepYaml("data/students.yaml")
+#
+#
+# # Тестирование общего функционала (исправлено - убран параметр repo)
+# def test_common_functionality():
+#     print("=== JSON Репозиторий ===")
+#     _test_repo_functionality(json_repo)
+#
+#     print("\n=== YAML Репозиторий ===")
+#     _test_repo_functionality(yaml_repo)
+#
+#
+# def _test_repo_functionality(repo: StudentRepository):
+#     print(f"Количество студентов: {repo.get_count()}")
+#
+#     # Добавление студента
+#     new_student = repo.add_student({
+#         'first_name': 'Иван',
+#         'last_name': 'Тестов',
+#         'patronymic': 'Сергеевич',
+#         'address': 'г. Москва, ул. Примерная, д. 1',
+#         'phone': '+79990000000',
+#         'min_required_facultative_hours': 10
+#     })
+#     print(f"Добавлен: {new_student.brief_info()}")
+#
+#     # Поиск по ID
+#     found = repo.get_by_id(new_student.student_id)
+#     print(f"Найден: {found.brief_info() if found else 'Не найден'}")
+#
+#     # Сортировка
+#     sorted_list = repo.sort_by_name()
+#     print("Отсортированный список:")
+#     for student in sorted_list:
+#         print(f"  {student.brief_info()}")
+#
+#
+# # Тестирование полиморфизма
+# def test_polymorphism():
+#     repositories = [json_repo, yaml_repo]
+#
+#     for repo in repositories:
+#         print(f"\nТип репозитория: {type(repo).__name__}")
+#         print(f"Файл: {repo._filename}")
+#         print(f"Студентов: {repo.get_count()}")
+#
+#
+# # Тестирование пагинации (исправлено - убран параметр repo)
+# def test_pagination():
+#     print(f"\nПагинация для JSON (k=3, n=2):")
+#     _test_repo_pagination(json_repo)
+#
+#     print(f"\nПагинация для YAML (k=3, n=2):")
+#     _test_repo_pagination(yaml_repo)
+#
+#
+def _test_repo_pagination(repo: StudentRepository):
+    page1 = repo.get_k_n_short_list(5, 5)
+    repo.add_student({
+         'first_name': 'Иван',
+         'last_name': 'Тестов',
+         'patronymic': 'Сергеевич',
+         'address': 'г. Москва, ул. Примерная, д. 1',
+         'phone': '+79990000000',
+         'min_required_facultative_hours': 10
+     })
+    print(repo.get_count())
+    for student in page1:
+        print(f"  {student.brief_info()}")
+
+
+if __name__ == "__main__":
+    repo = StudentRepJson("data/students.json")
+    # test_common_functionality()
+    # test_polymorphism()
+    _test_repo_pagination(repo)
+

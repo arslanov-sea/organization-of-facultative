@@ -1,0 +1,126 @@
+- address: г. СПб, ул. Невская, д. 5
+  first_name: Алексей
+  last_name: Иванов
+  min_required_facultative_hours: 20
+  patronymic: null
+  phone: '+79992223344'
+  student_id: 2
+- address: г. Казань, ул. Кремлевская, д. 20
+  first_name: Алексей
+  last_name: Иванов
+  min_required_facultative_hours: 22
+  patronymic: Сергеевич
+  phone: '+79994445566'
+  student_id: 4
+- address: г. Москва, ул. Ленина, д. 10
+  first_name: Борис
+  last_name: Петров
+  min_required_facultative_hours: 15
+  patronymic: Алексеевич
+  phone: '+79991112233'
+  student_id: 1
+- address: г. Новосибирск, ул. Советская, д. 25
+  first_name: Ольга
+  last_name: Петрова
+  min_required_facultative_hours: 16
+  patronymic: null
+  phone: '+79995556677'
+  student_id: 5
+- address: г. Екатеринбург, ул. Мира, д. 15
+  first_name: Мария
+  last_name: Сидорова
+  min_required_facultative_hours: 18
+  patronymic: Петровна
+  phone: '+79993334455'
+  student_id: 3
+- address: г. Москва, ул. Примерная, д. 1
+  first_name: Иван
+  last_name: Тестов
+  min_required_facultative_hours: 10
+  patronymic: Сергеевич
+  phone: '+79990000000'
+  student_id: 6
+- address: г. Москва, ул. Примерная, д. 1
+  first_name: Иван
+  last_name: Тестов
+  min_required_facultative_hours: 10
+  patronymic: Сергеевич
+  phone: '+79990000000'
+  student_id: 7
+- address: г. Москва, ул. Примерная, д. 1
+  first_name: Иван
+  last_name: Тестов
+  min_required_facultative_hours: 10
+  patronymic: Сергеевич
+  phone: '+79990000000'
+  student_id: 8
+- address: г. Москва, ул. Примерная, д. 1
+  first_name: Иван
+  last_name: Тестов
+  min_required_facultative_hours: 10
+  patronymic: Сергеевич
+  phone: '+79990000000'
+  student_id: 9
+- address: г. Москва, ул. Примерная, д. 1
+  first_name: Иван
+  last_name: Тестов
+  min_required_facultative_hours: 10
+  patronymic: Сергеевич
+  phone: '+79990000000'
+  student_id: 10
+- address: г. Москва, ул. Примерная, д. 1
+  first_name: Иван
+  last_name: Тестов
+  min_required_facultative_hours: 10
+  patronymic: Сергеевич
+  phone: '+79990000000'
+  student_id: 11
+- address: г. Москва, ул. Примерная, д. 1
+  first_name: Иван
+  last_name: Тестов
+  min_required_facultative_hours: 10
+  patronymic: Сергеевич
+  phone: '+79990000000'
+  student_id: 12
+- address: г. Москва, ул. Примерная, д. 1
+  first_name: Иван
+  last_name: Тестов
+  min_required_facultative_hours: 10
+  patronymic: Сергеевич
+  phone: '+79990000000'
+  student_id: 13
+- address: г. Москва, ул. Примерная, д. 1
+  first_name: Иван
+  last_name: Тестов
+  min_required_facultative_hours: 10
+  patronymic: Сергеевич
+  phone: '+79990000000'
+  student_id: 14
+- address: г. Москва, ул. Примерная, д. 1
+  first_name: Иван
+  last_name: Тестов
+  min_required_facultative_hours: 10
+  patronymic: Сергеевич
+  phone: '+79990000000'
+  student_id: 15
+- address: г. Москва, ул. Примерная, д. 1
+  first_name: Иван
+  last_name: Тестов
+  min_required_facultative_hours: 10
+  patronymic: Сергеевич
+  phone: '+79990000000'
+  student_id: 16
+- address: г. Москва, ул. Примерная, д. 1
+  first_name: Иван
+  last_name: Тестов
+  min_required_facultative_hours: 10
+  patronymic: Сергеевич
+  phone: '+79990000000'
+  student_id: 17
+- address: г. Москва, ул. Примерная, д. 1
+  first_name: Иван
+  last_name: Тестов
+  min_required_facultative_hours: 10
+  patronymic: Сергеевич
+  phone: '+79990000000'
+  student_id: 18

@@ -1,0 +1,209 @@
+[
+  {
+    "student_id": 2,
+    "first_name": "Мария",
+    "last_name": "Иванова",
+    "patronymic": "Петровна",
+    "address": "г. Санкт-Петербург, ул. Невская, д. 20",
+    "phone": "+79992223344",
+    "min_required_facultative_hours": 18
+  },
+  {
+    "student_id": 6,
+    "first_name": "Мария",
+    "last_name": "Иванова",
+    "patronymic": "Петровна",
+    "address": "г. Санкт-Петербург, ул. Невская, д. 20",
+    "phone": "+79992223344",
+    "min_required_facultative_hours": 18
+  },
+  {
+    "student_id": 3,
+    "first_name": "Сергей",
+    "last_name": "Кузнецов",
+    "patronymic": "Александрович",
+    "address": "г. Екатеринбург, ул. Ленина, д. 30",
+    "phone": "+79993334455",
+    "min_required_facultative_hours": 22
+  },
+  {
+    "student_id": 7,
+    "first_name": "Сергей",
+    "last_name": "Кузнецов",
+    "patronymic": "Александрович",
+    "address": "г. Екатеринбург, ул. Ленина, д. 30",
+    "phone": "+79993334455",
+    "min_required_facultative_hours": 22
+  },
+  {
+    "student_id": 4,
+    "first_name": "Иван",
+    "last_name": "Петров",
+    "patronymic": "Сергеевич",
+    "address": "г. Москва, ул. Пушкина, д. 10",
+    "phone": "+79998765432",
+    "min_required_facultative_hours": 25
+  },
+  {
+    "student_id": 1,
+    "first_name": "Алексей",
+    "last_name": "Сидоров",
+    "patronymic": "Владимирович",
+    "address": "г. Москва, ул. Мира, д. 5",
+    "phone": "+79991112233",
+    "min_required_facultative_hours": 15
+  },
+  {
+    "student_id": 5,
+    "first_name": "Алексей",
+    "last_name": "Сидоров",
+    "patronymic": "Владимирович",
+    "address": "г. Москва, ул. Мира, д. 5",
+    "phone": "+79991112233",
+    "min_required_facultative_hours": 15
+  },
+  {
+    "student_id": 8,
+    "first_name": "Иван",
+    "last_name": "Тестов",
+    "patronymic": "Сергеевич",
+    "address": "г. Москва, ул. Примерная, д. 1",
+    "phone": "+79990000000",
+    "min_required_facultative_hours": 10
+  },
+  {
+    "student_id": 9,
+    "first_name": "Иван",
+    "last_name": "Тестов",
+    "patronymic": "Сергеевич",
+    "address": "г. Москва, ул. Примерная, д. 1",
+    "phone": "+79990000000",
+    "min_required_facultative_hours": 10
+  },
+  {
+    "student_id": 10,
+    "first_name": "Иван",
+    "last_name": "Тестов",
+    "patronymic": "Сергеевич",
+    "address": "г. Москва, ул. Примерная, д. 1",
+    "phone": "+79990000000",
+    "min_required_facultative_hours": 10
+  },
+  {
+    "student_id": 11,
+    "first_name": "Иван",
+    "last_name": "Тестов",
+    "patronymic": "Сергеевич",
+    "address": "г. Москва, ул. Примерная, д. 1",
+    "phone": "+79990000000",
+    "min_required_facultative_hours": 10
+  },
+  {
+    "student_id": 12,
+    "first_name": "Иван",
+    "last_name": "Тестов",
+    "patronymic": "Сергеевич",
+    "address": "г. Москва, ул. Примерная, д. 1",
+    "phone": "+79990000000",
+    "min_required_facultative_hours": 10
+  },
+  {
+    "student_id": 13,
+    "first_name": "Иван",
+    "last_name": "Тестов",
+    "patronymic": "Сергеевич",
+    "address": "г. Москва, ул. Примерная, д. 1",
+    "phone": "+79990000000",
+    "min_required_facultative_hours": 10
+  },
+  {
+    "student_id": 14,
+    "first_name": "Иван",
+    "last_name": "Тестов",
+    "patronymic": "Сергеевич",
+    "address": "г. Москва, ул. Примерная, д. 1",
+    "phone": "+79990000000",
+    "min_required_facultative_hours": 10
+  },
+  {
+    "student_id": 15,
+    "first_name": "Иван",
+    "last_name": "Тестов",
+    "patronymic": "Сергеевич",
+    "address": "г. Москва, ул. Примерная, д. 1",
+    "phone": "+79990000000",
+    "min_required_facultative_hours": 10
+  },
+  {
+    "student_id": 16,
+    "first_name": "Иван",
+    "last_name": "Тестов",
+    "patronymic": "Сергеевич",
+    "address": "г. Москва, ул. Примерная, д. 1",
+    "phone": "+79990000000",
+    "min_required_facultative_hours": 10
+  },
+  {
+    "student_id": 17,
+    "first_name": "Иван",
+    "last_name": "Тестов",
+    "patronymic": "Сергеевич",
+    "address": "г. Москва, ул. Примерная, д. 1",
+    "phone": "+79990000000",
+    "min_required_facultative_hours": 10
+  },
+  {
+    "student_id": 18,
+    "first_name": "Иван",
+    "last_name": "Тестов",
+    "patronymic": "Сергеевич",
+    "address": "г. Москва, ул. Примерная, д. 1",
+    "phone": "+79990000000",
+    "min_required_facultative_hours": 10
+  },
+  {
+    "student_id": 19,
+    "first_name": "Иван",
+    "last_name": "Тестов",
+    "patronymic": "Сергеевич",
+    "address": "г. Москва, ул. Примерная, д. 1",
+    "phone": "+79990000000",
+    "min_required_facultative_hours": 10
+  },
+  {
+    "student_id": 20,
+    "first_name": "Иван",
+    "last_name": "Тестов",
+    "patronymic": "Сергеевич",
+    "address": "г. Москва, ул. Примерная, д. 1",
+    "phone": "+79990000000",
+    "min_required_facultative_hours": 10
+  },
+  {
+    "student_id": 21,
+    "first_name": "Иван",
+    "last_name": "Тестов",
+    "patronymic": "Сергеевич",
+    "address": "г. Москва, ул. Примерная, д. 1",
+    "phone": "+79990000000",
+    "min_required_facultative_hours": 10
+  },
+  {
+    "student_id": 22,
+    "first_name": "Иван",
+    "last_name": "Тестов",
+    "patronymic": "Сергеевич",
+    "address": "г. Москва, ул. Примерная, д. 1",
+    "phone": "+79990000000",
+    "min_required_facultative_hours": 10
+  },
+  {
+    "student_id": 23,
+    "first_name": "Иван",
+    "last_name": "Тестов",
+    "patronymic": "Сергеевич",
+    "address": "г. Москва, ул. Примерная, д. 1",
+    "phone": "+79990000000",
+    "min_required_facultative_hours": 10
+  }
+]

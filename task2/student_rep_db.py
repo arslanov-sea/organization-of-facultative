@@ -1,5 +1,11 @@
-import psycopg2
+"""
+Модуль для работы с базой данных студентов.
+
+Содержит классы для подключения к БД и репозиторий для работы с данными студентов.
+"""
+
 from typing import List
+import psycopg2
 from student import Student
 
 DB_CONFIG = {
@@ -12,23 +18,29 @@ DB_CONFIG = {
 
 
 class DatabaseConnection:
+    """Класс для управления подключением к базе данных (одиночка)."""
+
     _instance = None
 
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(DatabaseConnection, cls).__new__(cls)
-            cls._instance._initialize_connection()
+            cls._instance.__init__()
         return cls._instance
 
-    def _initialize_connection(self):
-        self._db_name = DB_CONFIG['db_name']
-        self._host = DB_CONFIG['host']
-        self._port = DB_CONFIG['port']
-        self._user = DB_CONFIG['user']
-        self._password = DB_CONFIG['password']
-        self._create_table()
+    def __init__(self):
+        """Инициализирует подключение к базе данных."""
+        if not hasattr(self, '_initialized'):
+            self._db_name = DB_CONFIG['db_name']
+            self._host = DB_CONFIG['host']
+            self._port = DB_CONFIG['port']
+            self._user = DB_CONFIG['user']
+            self._password = DB_CONFIG['password']
+            self._initialized = True
+            self._create_table()
 
     def _get_connection(self):
+        """Возвращает соединение с базой данных."""
         return psycopg2.connect(
             dbname=self._db_name,
             host=self._host,
@@ -38,6 +50,7 @@ class DatabaseConnection:
         )
 
     def _create_table(self) -> None:
+        """Создает таблицу студентов, если она не существует."""
         conn = self._get_connection()
         try:
             with conn.cursor() as cursor:
@@ -57,6 +70,7 @@ class DatabaseConnection:
             conn.close()
 
     def execute_query(self, query: str, params: tuple = None) -> List[tuple]:
+        """Выполняет SQL запрос и возвращает результат."""
         conn = self._get_connection()
         try:
             with conn.cursor() as cursor:
@@ -69,6 +83,7 @@ class DatabaseConnection:
             conn.close()
 
     def execute_insert(self, query: str, params: tuple = None) -> int:
+        """Выполняет INSERT запрос и возвращает ID новой записи."""
         conn = self._get_connection()
         try:
             with conn.cursor() as cursor:
@@ -81,6 +96,7 @@ class DatabaseConnection:
             conn.close()
 
     def execute_update(self, query: str, params: tuple = None) -> int:
+        """Выполняет UPDATE запрос и возвращает количество измененных строк."""
         conn = self._get_connection()
         try:
             with conn.cursor() as cursor:
@@ -91,6 +107,7 @@ class DatabaseConnection:
             conn.close()
 
     def execute_delete(self, query: str, params: tuple = None) -> int:
+        """Выполняет DELETE запрос и возвращает количество удаленных строк."""
         conn = self._get_connection()
         try:
             with conn.cursor() as cursor:
@@ -102,10 +119,14 @@ class DatabaseConnection:
 
 
 class StudentRepDB:
+    """Репозиторий для работы со студентами в базе данных."""
+
     def __init__(self):
+        """Инициализирует репозиторий с подключением к БД."""
         self._db = DatabaseConnection()
 
     def get_by_id(self, student_id: int) -> Student | None:
+        """Возвращает студента по ID или None если не найден."""
         rows = self._db.execute_query("""
             SELECT student_id, first_name, last_name, patronymic, 
                    address, phone, min_required_facultative_hours 
@@ -126,6 +147,16 @@ class StudentRepDB:
         return None
 
     def get_k_n_short_list(self, k: int, n: int) -> List[Student]:
+        """
+        Возвращает список студентов для постраничного отображения.
+
+        Args:
+            k: Количество студентов на странице
+            n: Номер страницы
+
+        Returns:
+            Список студентов для указанной страницы
+        """
         offset = (n - 1) * k
         rows = self._db.execute_query("""
             SELECT student_id, first_name, last_name, patronymic, 
@@ -147,6 +178,7 @@ class StudentRepDB:
         return students
 
     def add_student(self, student_data: dict) -> Student:
+        """Добавляет нового студента и возвращает созданный объект."""
         new_id = self._db.execute_insert("""
             INSERT INTO students (first_name, last_name, patronymic, 
                                  address, phone, min_required_facultative_hours)
@@ -172,6 +204,7 @@ class StudentRepDB:
         )
 
     def update_student(self, student_id: int, student_data: dict) -> Student | None:
+        """Обновляет данные студента и возвращает обновленный объект."""
         rows_affected = self._db.execute_update("""
             UPDATE students 
             SET first_name = %s, last_name = %s, patronymic = %s,
@@ -200,6 +233,7 @@ class StudentRepDB:
         return None
 
     def delete_student(self, student_id: int) -> bool:
+        """Удаляет студента по ID и возвращает успешность операции."""
         rows_affected = self._db.execute_delete("""
             DELETE FROM students WHERE student_id = %s
         """, (student_id,))
@@ -207,5 +241,7 @@ class StudentRepDB:
         return rows_affected > 0
 
     def get_count(self) -> int:
+        """Возвращает общее количество студентов в базе."""
         rows = self._db.execute_query("SELECT COUNT(*) FROM students")
         return rows[0][0] if rows else 0
+

@@ -1,32 +1,71 @@
-from typing import List, Callable
+"""
+Модуль декораторов для репозитория студентов.
+
+Содержит декораторы для фильтрации и сортировки студентов.
+"""
+
+from typing import List, Callable, Any
 from student import Student
+from student_repository import StudentRepository
 
 
 class StudentRepFilterSortDecorator:
-    def __init__(self, _repo, filter_func: Callable = None,
-                 sort_key: Callable[[Student], any] = None):
-        self._repo = _repo
+    """Декоратор для фильтрации и сортировки студентов в репозитории."""
+
+    def __init__(self, repo: StudentRepository, filter_func: Callable[[Student], bool] = None,
+                 sort_key: Callable[[Student], Any] = None):
+        """
+        Инициализирует декоратор.
+
+        Args:
+            repo: Репозиторий студентов
+            filter_func: Функция для фильтрации студентов
+            sort_key: Функция для определения ключа сортировки
+        """
+        self._repo = repo
         self._filter_func = filter_func
         self._sort_key = sort_key
         self._count = self._repo.get_count()
 
     def get_k_n_short_list(self, k: int, n: int) -> List[Student]:
-        students = self._repo.get_k_n_short_list(self._count, 1)  # Получаем всех
+        """
+        Возвращает отсортированный и отфильтрованный список студентов.
 
-        if self._filter_func:
-            students = list(filter(self._filter_func, students))
+        Args:
+            k: Количество студентов на странице
+            n: Номер страницы
 
-        if self._sort_key:
-            students.sort(key=self._sort_key)
+        Returns:
+            Список студентов для указанной страницы
+        """
+        try:
+            students = self._repo.get_k_n_short_list(self._count, 1)  # Получаем всех
 
-        start_index = (n - 1) * k
-        end_index = start_index + k
-        return students[start_index:end_index] if start_index < len(students) else []
+            if self._filter_func:
+                students = list(filter(self._filter_func, students))
+
+            if self._sort_key:
+                students.sort(key=self._sort_key)
+
+            start_index = (n - 1) * k
+            end_index = start_index + k
+            return students[start_index:end_index] if start_index < len(students) else []
+        except (ValueError, TypeError, AttributeError) as e:
+            raise RuntimeError(f"Error during filtering or sorting: {e}") from e
 
     def get_count(self) -> int:
-        students = self._repo.get_k_n_short_list(self._count, 1)
+        """
+        Возвращает количество студентов после применения фильтра.
 
-        if self._filter_func:
-            students = list(filter(self._filter_func, students))
+        Returns:
+            Количество отфильтрованных студентов
+        """
+        try:
+            students = self._repo.get_k_n_short_list(self._count, 1)
 
-        return len(students)
+            if self._filter_func:
+                students = list(filter(self._filter_func, students))
+
+            return len(students)
+        except (ValueError, TypeError, AttributeError) as e:
+            raise RuntimeError(f"Error during filtering: {e}") from e
