@@ -251,10 +251,10 @@ class Student(Person):
         return student_id
 
     @staticmethod
-    def validate_phone(phone: str | None) -> str | None:
+    def validate_phone(phone: str) -> str:
         """Валидирует номер телефона."""
         if phone is None:
-            return None
+            raise ValueError("Phone must be a format '+71234567890', not None!")
 
         if not isinstance(phone, str):
             raise ValueError("Phone must be a string")
@@ -297,13 +297,7 @@ class Student(Person):
         """Проверяет равенство двух объектов Student."""
         if not isinstance(other, Student):
             return False
-        return (self._student_id == other._student_id and
-                self._first_name == other._first_name and
-                self._last_name == other._last_name and
-                self._patronymic == other._patronymic and
-                self._address == other._address and
-                self._phone == other._phone and
-                self._min_required_facultative_hours == other._min_required_facultative_hours)
+        return self._phone == other._phone
 
     @property
     def student_id(self) -> int:
@@ -326,12 +320,12 @@ class Student(Person):
         self._patronymic = self.validate_name(value, True)
 
     @property
-    def phone(self) -> str | None:
+    def phone(self) -> str:
         """Возвращает номер телефона."""
         return self._phone
 
     @phone.setter
-    def phone(self, value: str | None) -> None:
+    def phone(self, value: str) -> None:
         """Устанавливает номер телефона."""
         self._phone = self.validate_phone(value)
 
