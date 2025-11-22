@@ -49,6 +49,13 @@ class StudentRepository:
         self._save()
         return self._students.copy()
 
+    def _is_student_unique(self, new_student: Student) -> bool:
+        """Проверяет на уникальность студента (только по номеру телефона)"""
+        for student in self._students:
+            if new_student.phone == student.phone:
+                return False
+        return True
+
     def add_student(self, student_data: dict) -> Student:
         """Добавляет нового студента."""
         new_id = max([s.student_id for s in self._students] or [0]) + 1
@@ -58,34 +65,58 @@ class StudentRepository:
             last_name=student_data['last_name'],
             patronymic=student_data.get('patronymic'),
             address=student_data['address'],
-            phone=student_data.get('phone'),
+            phone=student_data['phone'],
             min_required_facultative_hours=student_data.get(
                 'min_required_facultative_hours', 0
             )
         )
-        self._students.append(student)
+
+        if self._is_student_unique(student):
+            self._students.append(student)
+        else:
+            raise ValueError("Пользователь с данным номером телефона уже существует")
         self._save()
         return student
 
     def update_student(self, student_id: int, student_data: dict) -> Student | None:
         """Обновляет данные студента по ID."""
+
+        student_index = None
+        current_student = None
+
+        # Находим студента и его индекс
         for i, student in enumerate(self._students):
             if student.student_id == student_id:
-                updated_student = Student(
-                    student_id=student_id,
-                    first_name=student_data['first_name'],
-                    last_name=student_data['last_name'],
-                    patronymic=student_data.get('patronymic'),
-                    address=student_data['address'],
-                    phone=student_data.get('phone'),
-                    min_required_facultative_hours=student_data.get(
-                        'min_required_facultative_hours', 0
-                    )
-                )
-                self._students[i] = updated_student
-                self._save()
-                return updated_student
-        return None
+                student_index = i
+                current_student = student
+                break
+
+        # Если студент не найден
+        if student_index is None:
+            return None
+
+        # Создаем обновленного студента
+        updated_student = Student(
+            student_id=student_id,
+            first_name=student_data['first_name'],
+            last_name=student_data['last_name'],
+            patronymic=student_data.get('patronymic'),
+            address=student_data['address'],
+            phone=student_data['phone'],  # убрал .get(), так как phone обязателен
+            min_required_facultative_hours=student_data.get(
+                'min_required_facultative_hours', 0
+            )
+        )
+
+        # Проверяем уникальность номера телефона, только если он изменился
+        if updated_student.phone != current_student.phone:
+            if not self._is_student_unique(updated_student):
+                raise ValueError("Пользователь с данным номером телефона уже существует")
+
+        # Обновляем студента
+        self._students[student_index] = updated_student
+        self._save()
+        return updated_student
 
     def delete_student(self, student_id: int) -> bool:
         """Удаляет студента по ID."""

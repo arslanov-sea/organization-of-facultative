@@ -61,7 +61,7 @@ class DatabaseConnection:
                         last_name VARCHAR(100) NOT NULL,
                         patronymic VARCHAR(100),
                         address TEXT NOT NULL,
-                        phone VARCHAR(20),
+                        phone VARCHAR(20) UNIQUE NOT NULL,
                         min_required_facultative_hours INTEGER DEFAULT 0
                     )
                 """)
@@ -92,6 +92,9 @@ class DatabaseConnection:
                 if query.strip().upper().startswith('INSERT') and 'RETURNING' in query.upper():
                     return cursor.fetchone()[0]
                 return cursor.rowcount
+        except psycopg2.IntegrityError as e:
+            conn.rollback()
+            raise e
         finally:
             conn.close()
 
@@ -103,6 +106,9 @@ class DatabaseConnection:
                 cursor.execute(query, params or ())
                 conn.commit()
                 return cursor.rowcount
+        except psycopg2.IntegrityError as e:
+            conn.rollback()
+            raise e
         finally:
             conn.close()
 
@@ -179,50 +185,23 @@ class StudentRepDB:
 
     def add_student(self, student_data: dict) -> Student:
         """Добавляет нового студента и возвращает созданный объект."""
-        new_id = self._db.execute_insert("""
-            INSERT INTO students (first_name, last_name, patronymic, 
-                                 address, phone, min_required_facultative_hours)
-            VALUES (%s, %s, %s, %s, %s, %s)
-            RETURNING student_id
-        """, (
-            student_data['first_name'],
-            student_data['last_name'],
-            student_data.get('patronymic'),
-            student_data['address'],
-            student_data.get('phone'),
-            student_data.get('min_required_facultative_hours', 0)
-        ))
+        try:
+            new_id = self._db.execute_insert("""
+                INSERT INTO students (first_name, last_name, patronymic, 
+                                     address, phone, min_required_facultative_hours)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                RETURNING student_id
+            """, (
+                student_data['first_name'],
+                student_data['last_name'],
+                student_data.get('patronymic'),
+                student_data['address'],
+                student_data['phone'],
+                student_data.get('min_required_facultative_hours', 0)
+            ))
 
-        return Student(
-            student_id=new_id,
-            first_name=student_data['first_name'],
-            last_name=student_data['last_name'],
-            patronymic=student_data.get('patronymic'),
-            address=student_data['address'],
-            phone=student_data.get('phone'),
-            min_required_facultative_hours=student_data.get('min_required_facultative_hours', 0)
-        )
-
-    def update_student(self, student_id: int, student_data: dict) -> Student | None:
-        """Обновляет данные студента и возвращает обновленный объект."""
-        rows_affected = self._db.execute_update("""
-            UPDATE students 
-            SET first_name = %s, last_name = %s, patronymic = %s,
-                address = %s, phone = %s, min_required_facultative_hours = %s
-            WHERE student_id = %s
-        """, (
-            student_data['first_name'],
-            student_data['last_name'],
-            student_data.get('patronymic'),
-            student_data['address'],
-            student_data.get('phone'),
-            student_data.get('min_required_facultative_hours', 0),
-            student_id
-        ))
-
-        if rows_affected > 0:
             return Student(
-                student_id=student_id,
+                student_id=new_id,
                 first_name=student_data['first_name'],
                 last_name=student_data['last_name'],
                 patronymic=student_data.get('patronymic'),
@@ -230,7 +209,44 @@ class StudentRepDB:
                 phone=student_data.get('phone'),
                 min_required_facultative_hours=student_data.get('min_required_facultative_hours', 0)
             )
-        return None
+        except psycopg2.IntegrityError as e:
+            if 'phone' in str(e).lower() and 'unique' in str(e).lower():
+                raise ValueError("Пользователь с данным номером телефона уже существует")
+            raise e
+
+    def update_student(self, student_id: int, student_data: dict) -> Student | None:
+        """Обновляет данные студента и возвращает обновленный объект."""
+        try:
+            rows_affected = self._db.execute_update("""
+                UPDATE students 
+                SET first_name = %s, last_name = %s, patronymic = %s,
+                    address = %s, phone = %s, min_required_facultative_hours = %s
+                WHERE student_id = %s
+            """, (
+                student_data['first_name'],
+                student_data['last_name'],
+                student_data.get('patronymic'),
+                student_data['address'],
+                student_data.get('phone'),
+                student_data.get('min_required_facultative_hours', 0),
+                student_id
+            ))
+
+            if rows_affected > 0:
+                return Student(
+                    student_id=student_id,
+                    first_name=student_data['first_name'],
+                    last_name=student_data['last_name'],
+                    patronymic=student_data.get('patronymic'),
+                    address=student_data['address'],
+                    phone=student_data.get('phone'),
+                    min_required_facultative_hours=student_data.get('min_required_facultative_hours', 0)
+                )
+            return None
+        except psycopg2.IntegrityError as e:
+            if 'phone' in str(e).lower() and 'unique' in str(e).lower():
+                raise ValueError("Пользователь с данным номером телефона уже существует")
+            raise e
 
     def delete_student(self, student_id: int) -> bool:
         """Удаляет студента по ID и возвращает успешность операции."""
@@ -244,4 +260,3 @@ class StudentRepDB:
         """Возвращает общее количество студентов в базе."""
         rows = self._db.execute_query("SELECT COUNT(*) FROM students")
         return rows[0][0] if rows else 0
-
