@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Список студентов</title>
+</head>
+<body>
+    <h1>Список студентов</h1>
+    {% if students %}
+        <ul>
+        {% for s in students %}
+            <li>{{ s.last_name }} {{ s.first_name }}{% if s.patronymic %} {{ s.patronymic }}{% endif %}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Студентов нет.</p>
+    {% endif %}
+</body>
+</html>
