@@ -5,9 +5,9 @@
 """
 
 from typing import List
-from student_repository import StudentRepository
-from student_rep_db import StudentRepDB
-from student import Student
+from .student_repository import StudentRepository
+from .student_rep_db import StudentRepDB
+from .student import Student
 
 
 class StudentRepDBAdapter(StudentRepository):

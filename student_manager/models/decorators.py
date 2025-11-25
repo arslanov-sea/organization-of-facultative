@@ -5,8 +5,8 @@
 """
 
 from typing import List, Callable, Any
-from student import Student
-from student_repository import StudentRepository
+from .student import Student
+from .student_repository import StudentRepository
 
 
 class StudentRepFilterSortDecorator:

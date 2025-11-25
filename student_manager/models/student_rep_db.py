@@ -6,7 +6,7 @@
 
 from typing import List
 import psycopg2
-from student import Student
+from .student import Student
 
 DB_CONFIG = {
     'db_name': 'universitydb',

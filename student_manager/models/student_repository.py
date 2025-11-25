@@ -6,7 +6,7 @@
 import json
 from typing import List
 import yaml
-from student import Student
+from .student import Student
 
 
 class StudentRepository:

@@ -1,19 +1,50 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Список студентов</title>
-</head>
-<body>
-    <h1>Список студентов</h1>
-    {% if students %}
-        <ul>
-        {% for s in students %}
-            <li>{{ s.last_name }} {{ s.first_name }}{% if s.patronymic %} {{ s.patronymic }}{% endif %}</li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>Студентов нет.</p>
-    {% endif %}
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Список студентов{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">Список студентов</h1>
+        
+        {% if students %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Фамилия</th>
+                        <th>Имя</th>
+                        <th>Отчество</th>
+                        <th>Адрес</th>
+                        <th>Телефон</th>
+                        <th>Факультативные часы</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ student.student_id }}</td>
+                        <td>{{ student.last_name }}</td>
+                        <td>{{ student.first_name }}</td>
+                        <td>{{ student.patronymic or '-' }}</td>
+                        <td>{{ student.address }}</td>
+                        <td>{{ student.phone }}</td>
+                        <td>{{ student.min_required_facultative_hours }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="alert alert-info mt-3">
+            Всего студентов: {{ students|length }}
+        </div>
+        {% else %}
+        <div class="alert alert-warning">
+            Студенты не найдены
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
