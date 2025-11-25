@@ -7,13 +7,14 @@
 from typing import List
 import psycopg2
 from .student import Student
+from config import DB_HOST, DB_NAME, DB_PASSWORD, DB_USERNAME, DB_PORT
 
 DB_CONFIG = {
-    'db_name': 'universitydb',
-    'host': 'localhost',
-    'port': 5432,
-    'user': 'postgres',
-    'password': '1234'
+    'db_name': DB_NAME,
+    'host': DB_HOST,
+    'port': DB_PORT,
+    'user': DB_USERNAME,
+    'password': DB_PASSWORD
 }
 
 
