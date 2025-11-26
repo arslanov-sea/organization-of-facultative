@@ -1,5 +1,6 @@
 from flask import render_template
-from models.student_repository import StudentRepJson
+from models.student_repository import StudentRepository
+from factory.universityFactory import UniversityFactory as factory
 
 DATA_FILE_PATH = 'models/data/students.json'
 
@@ -46,11 +47,11 @@ class StudentsListView(Observer):
 class StudentsController(Subject):
     """Контроллер, связывающий репозиторий и наблюдателей"""
 
-    def __init__(self):
+    def __init__(self, university: str | None = None):
         super().__init__()
-        self.repo = StudentRepJson(DATA_FILE_PATH)
-        # Прикрепляем представление как наблюдателя
-        self.view = StudentsListView()
+        self.university: str = university
+        self.repo: StudentRepository = factory.create_repository(university) if university else None
+        self.view: Observer = StudentsListView()
         self.attach(self.view)
 
     def show_list_students(self):
@@ -61,11 +62,3 @@ class StudentsController(Subject):
         # Уведомляем всех наблюдателей и возвращаем результат первого (шаблона)
         results = self.notify(students)
         return results[0] if results else "No observers"
-
-    def add_student_view(self, view):
-        """Добавить дополнительное представление"""
-        self.attach(view)
-
-    def get_student_count(self):
-        """Получить количество студентов"""
-        return self.repo.get_count()
