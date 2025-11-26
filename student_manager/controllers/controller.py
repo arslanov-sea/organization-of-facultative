@@ -1,6 +1,7 @@
 from flask import render_template
-from models.student_repository import StudentRepository
+from models.student_repository import StudentRepository, Student
 from factory.universityFactory import UniversityFactory as factory
+from typing import List
 
 DATA_FILE_PATH = 'models/data/students.json'
 
@@ -9,7 +10,7 @@ class Subject:
     """Субъект для паттерна Наблюдатель"""
 
     def __init__(self):
-        self._observers = []
+        self._observers: List[Observer] = []
 
     def attach(self, observer):
         """Добавить наблюдателя"""
@@ -33,7 +34,7 @@ class Subject:
 class Observer:
     """Базовый класс Наблюдателя"""
 
-    def update(self, data):
+    def update(self, data: List[Student]):
         pass
 
 
@@ -49,16 +50,27 @@ class StudentsController(Subject):
 
     def __init__(self, university: str | None = None):
         super().__init__()
-        self.university: str = university
-        self.repo: StudentRepository = factory.create_repository(university) if university else None
-        self.view: Observer = StudentsListView()
-        self.attach(self.view)
+        self._university: str = university
+        self._repo: StudentRepository = factory.create_repository(university) if university else None
+        self._view: Observer = StudentsListView()
+        self.attach(self._view)
 
     def show_list_students(self):
-        """Получить список студентов и уведомить наблюдателей"""
-        students = self.repo.get_k_n_short_list(self.repo.get_count(), 1)
-        print(f"Загружено студентов: {len(students)}")
+        if self._repo:
+            """Получить список студентов и уведомить наблюдателей"""
+            students = self._repo.get_k_n_short_list(self._repo.get_count(), 1)
+            print(f"Загружено студентов: {len(students)}")
 
-        # Уведомляем всех наблюдателей и возвращаем результат первого (шаблона)
-        results = self.notify(students)
-        return results[0] if results else "No observers"
+            results = self.notify(students)
+            return results[0] if results else "No observers"
+        else:
+            raise ValueError("Университет не существует (репозиторий не найден)")
+
+
+    def get_university(self) -> str | None:
+        return self._university
+
+
+    def set_university(self, university: str | None):
+        self._university = university
+        self._repo: StudentRepository | None = factory.create_repository(university) if university else None
