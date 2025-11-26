@@ -3,7 +3,6 @@ from controllers.controller import StudentsController
 
 app = Flask(__name__)
 
-# Создаем контроллер
 students_controller = StudentsController()
 
 @app.route('/')

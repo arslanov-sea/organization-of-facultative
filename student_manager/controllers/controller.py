@@ -1,9 +1,7 @@
 from flask import render_template
 from models.student_repository import StudentRepository, Student
-from factory.universityFactory import UniversityFactory as factory
+from factory.universityFactory import UniversityFactory
 from typing import List
-
-DATA_FILE_PATH = 'models/data/students.json'
 
 
 class Subject:
@@ -44,14 +42,24 @@ class StudentsListView(Observer):
     def update(self, students):
         return render_template('index.html', students=students)
 
+class Controller:
+    def __init__(self, university: str | None):
+        self._university: str = university
+        self._repo: StudentRepository = UniversityFactory.create_repository(university) if university else None
 
-class StudentsController(Subject):
+    def get_university(self) -> str | None:
+        return self._university
+
+    def set_university(self, university: str | None):
+        self._university = university
+        self._repo: StudentRepository | None = UniversityFactory.create_repository(university) if university else None
+
+
+class StudentsController(Subject, Controller):
     """Контроллер, связывающий репозиторий и наблюдателей"""
 
     def __init__(self, university: str | None = None):
-        super().__init__()
-        self._university: str = university
-        self._repo: StudentRepository = factory.create_repository(university) if university else None
+        super().__init__(university = university)
         self._view: Observer = StudentsListView()
         self.attach(self._view)
 
@@ -66,11 +74,3 @@ class StudentsController(Subject):
         else:
             raise ValueError("Университет не существует (репозиторий не найден)")
 
-
-    def get_university(self) -> str | None:
-        return self._university
-
-
-    def set_university(self, university: str | None):
-        self._university = university
-        self._repo: StudentRepository | None = factory.create_repository(university) if university else None

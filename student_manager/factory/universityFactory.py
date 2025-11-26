@@ -7,17 +7,25 @@ import config
 class UniversityFactory:
     """Фабрика для создания репозиториев студентов в зависимости от университета"""
 
+    _repositories = dict()
+
     @staticmethod
     def create_repository(university_name: str):
         """
         Создает репозиторий для указанного университета
         """
+        if university_name in UniversityFactory._repositories:
+            return UniversityFactory._repositories[university_name]
+
         if university_name == "kubsu":
-            return StudentRepJson(config.JSON_DATA_FILE_PATH)
+            repo = StudentRepJson(config.JSON_DATA_FILE_PATH)
         elif university_name == "kubstu":
-            return StudentRepYaml(config.YAML_DATA_FILE_PATH)
+            repo = StudentRepYaml(config.YAML_DATA_FILE_PATH)
         elif university_name == "kubsau":
             db_repo = StudentRepDB()
-            return StudentRepDBAdapter(db_repo)
+            repo = StudentRepDBAdapter(db_repo)
         else:
             raise ValueError(f"Неизвестный университет: {university_name}")
+
+        UniversityFactory._repositories[university_name] = repo
+        return repo
