@@ -2,6 +2,7 @@ from flask import render_template
 from models.student_repository import StudentRepository, Student
 from factory.universityFactory import UniversityFactory
 from typing import List
+from flask import request, redirect, url_for
 
 
 class Subject:
@@ -44,7 +45,7 @@ class StudentsListView(Observer):
 
 class Controller:
     def __init__(self, university: str | None):
-        self._university: str = university
+        self._university = university
         self._repo: StudentRepository = UniversityFactory.create_repository(university) if university else None
 
     def get_university(self) -> str | None:
@@ -59,7 +60,8 @@ class StudentsController(Subject, Controller):
     """Контроллер, связывающий репозиторий и наблюдателей"""
 
     def __init__(self, university: str | None = None):
-        super().__init__(university = university)
+        Subject.__init__(self)
+        Controller.__init__(self, university)
         self._view: Observer = StudentsListView()
         self.attach(self._view)
 
@@ -73,4 +75,18 @@ class StudentsController(Subject, Controller):
             return results[0] if results else "No observers"
         else:
             raise ValueError("Университет не существует (репозиторий не найден)")
+
+
+class StudentsAddController(Controller):
+    def __init__(self, university: str | None = None):
+        super().__init__(university)
+
+    def show_add_student_form(self):
+
+        return render_template('add_form.html', university=self._university)
+
+    def add_student(self, request_data: dict):
+        request_min_req_hours = request_data.get('min_required_facultative_hours')
+        request_data['min_required_facultative_hours'] = int(request_min_req_hours) if request_min_req_hours else None
+        self._repo.add_student(request_data)
 

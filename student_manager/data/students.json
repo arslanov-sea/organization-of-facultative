@@ -205,5 +205,32 @@
     "address": "г. Москва, ул. Примерная, д. 1",
     "phone": "+79990000000",
     "min_required_facultative_hours": 10
+  },
+  {
+    "student_id": 24,
+    "first_name": "Сулейман",
+    "last_name": "Арсланов",
+    "patronymic": null,
+    "address": "ул. Ленина, д. 15, кв. 42",
+    "phone": "+79891231212",
+    "min_required_facultative_hours": 2
+  },
+  {
+    "student_id": 25,
+    "first_name": "Сулейман",
+    "last_name": "Арсланов",
+    "patronymic": null,
+    "address": "ул. Ленина, д. 15, кв. 42",
+    "phone": "+79891231299",
+    "min_required_facultative_hours": 2
+  },
+  {
+    "student_id": 26,
+    "first_name": "Сулейман",
+    "last_name": "Арсланов",
+    "patronymic": null,
+    "address": "ул. Ленина, д. 15, кв. 42",
+    "phone": "+79891231298",
+    "min_required_facultative_hours": 2
   }
 ]
