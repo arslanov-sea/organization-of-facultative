@@ -1,5 +1,6 @@
 from flask import render_template
 from models.student_repository import StudentRepository, Student
+from models.decorators import StudentRepFilterSortDecorator
 from factory.universityFactory import UniversityFactory
 from typing import List
 from flask import request, redirect, url_for
@@ -88,8 +89,54 @@ class StudentsController(Subject, Controller):
 
     def show_list_students(self):
         if self._repo:
-            students = self._repo.get_k_n_short_list(self._repo.get_count(), 1)
-            print(f"Загружено студентов: {len(students)}")
+            filter_type = request.args.get('filter_type', '')
+            filter_value = request.args.get('filter_value', '')
+            sort_by = request.args.get('sort_by', '')
+            sort_order = request.args.get('sort_order', 'asc')
+
+            decorated_repo = StudentRepFilterSortDecorator(self._repo)
+
+            if filter_type and filter_value:
+                if filter_type == 'name':
+                    filter_func = lambda \
+                        s: filter_value.lower() in f"{s.last_name} {s.first_name} {s.patronymic or ''}".lower()
+                elif filter_type == 'phone':
+                    filter_func = lambda s: filter_value in s.phone
+                elif filter_type == 'address':
+                    filter_func = lambda s: filter_value.lower() in s.address.lower()
+                elif filter_type == 'hours':
+                    try:
+                        hours = int(filter_value)
+                        filter_func = lambda s: s.min_required_facultative_hours >= hours
+                    except ValueError:
+                        filter_func = None
+                else:
+                    filter_func = None
+
+                if filter_func:
+                    decorated_repo.filter_func = filter_func
+
+            if sort_by:
+                if sort_by == 'name':
+                    sort_key = lambda s: (s.last_name, s.first_name, s.patronymic or '')
+                elif sort_by == 'phone':
+                    sort_key = lambda s: s.phone
+                elif sort_by == 'address':
+                    sort_key = lambda s: s.address
+                elif sort_by == 'hours':
+                    sort_key = lambda s: s.min_required_facultative_hours
+                elif sort_by == 'id':
+                    sort_key = lambda s: s.student_id
+                else:
+                    sort_key = None
+
+                if sort_key:
+                    decorated_repo.sort_key = sort_key
+                    decorated_repo.reverse = (sort_order == 'desc')
+
+            count = decorated_repo.get_count()
+            students = decorated_repo.get_k_n_short_list(count, 1)
+            print(f"Загружено студентов после фильтрации: {len(students)}")
 
             data = (students, self._university)
             results = self.notify(data)

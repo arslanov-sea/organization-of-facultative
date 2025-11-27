@@ -5,14 +5,60 @@
 {% block content %}
 <div class="row">
     <div class="col-12">
-        <div></div>
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="mb-0">Список студентов</h1>
-
-            <!-- ИСПРАВЛЕННАЯ ССЫЛКА -->
             <a href="{{ url_for('add_student', university=university) }}" class="btn btn-primary">
                 Добавить студента
             </a>
+        </div>
+
+        <!-- Форма фильтрации и сортировки -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Фильтрация и сортировка</h5>
+            </div>
+            <div class="card-body">
+                <form method="GET" class="row g-3">
+                    <div class="col-md-3">
+                        <label for="filter_type" class="form-label">Тип фильтра</label>
+                        <select class="form-select" id="filter_type" name="filter_type">
+                            <option value="">Без фильтра</option>
+                            <option value="name" {% if request.args.get('filter_type') == 'name' %}selected{% endif %}>ФИО</option>
+                            <option value="phone" {% if request.args.get('filter_type') == 'phone' %}selected{% endif %}>Телефон</option>
+                            <option value="address" {% if request.args.get('filter_type') == 'address' %}selected{% endif %}>Адрес</option>
+                            <option value="hours" {% if request.args.get('filter_type') == 'hours' %}selected{% endif %}>Часы (мин.)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="filter_value" class="form-label">Значение фильтра</label>
+                        <input type="text" class="form-control" id="filter_value" name="filter_value"
+                               value="{{ request.args.get('filter_value', '') }}"
+                               placeholder="Введите значение...">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="sort_by" class="form-label">Сортировка по</label>
+                        <select class="form-select" id="sort_by" name="sort_by">
+                            <option value="">Без сортировки</option>
+                            <option value="id" {% if request.args.get('sort_by') == 'id' %}selected{% endif %}>ID</option>
+                            <option value="name" {% if request.args.get('sort_by') == 'name' %}selected{% endif %}>ФИО</option>
+                            <option value="phone" {% if request.args.get('sort_by') == 'phone' %}selected{% endif %}>Телефон</option>
+                            <option value="address" {% if request.args.get('sort_by') == 'address' %}selected{% endif %}>Адрес</option>
+                            <option value="hours" {% if request.args.get('sort_by') == 'hours' %}selected{% endif %}>Часы</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="sort_order" class="form-label">Порядок</label>
+                        <select class="form-select" id="sort_order" name="sort_order">
+                            <option value="asc" {% if request.args.get('sort_order') != 'desc' %}selected{% endif %}>По возрастанию</option>
+                            <option value="desc" {% if request.args.get('sort_order') == 'desc' %}selected{% endif %}>По убыванию</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">Применить</button>
+                        <a href="{{ url_for('index', university=university) }}" class="btn btn-secondary">Сбросить</a>
+                    </div>
+                </form>
+            </div>
         </div>
 
         {% if students %}
@@ -31,7 +77,6 @@
                 </thead>
                 <tbody>
                     {% for student in students %}
-                    <!-- ИСПРАВЛЕННАЯ ССЫЛКА -->
                     <tr onclick="window.location='{{ url_for('update_student', university=university, student_id=student.student_id) }}'" style="cursor: pointer;">
                         <td>{{ student.student_id }}</td>
                         <td>{{ student.last_name }}</td>

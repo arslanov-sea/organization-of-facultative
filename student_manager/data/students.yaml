@@ -19,3 +19,10 @@
   patronymic: Иванович
   phone: '+79996401964'
   student_id: 3
+- address: ул. Ленина, д. 15, кв. 42
+  first_name: Алексей
+  last_name: Алексеев
+  min_required_facultative_hours: 3
+  patronymic: Арсланбекович
+  phone: '+79996401991'
+  student_id: 4
