@@ -107,11 +107,16 @@ class StudentsAddController(Controller):
         return render_template('student_add_form.html', university=self._university)
 
     def add_student(self, request_data: dict):
-
-        request_min_req_hours = request_data.get('min_required_facultative_hours')
-        request_data['min_required_facultative_hours'] = int(request_min_req_hours)
-        self._repo.add_student(request_data)
-        return redirect(url_for('index', university=self._university))
+        try:
+            request_min_req_hours = request_data.get('min_required_facultative_hours')
+            request_data['min_required_facultative_hours'] = int(request_min_req_hours)
+            self._repo.add_student(request_data)
+            return redirect(url_for('index', university=self._university))
+        except Exception as e:
+            return render_template('student_add_form.html',
+                                   university=self._university,
+                                   form_data=request.form.to_dict(),
+                                   error=str(e))
 
 
 class StudentsUpdateController(Controller):
@@ -119,8 +124,21 @@ class StudentsUpdateController(Controller):
         super().__init__(university)
 
     def show_update_student_form(self, student_id: int):
-        if self._repo.get_by_id(student_id):
-            return render_template('student_update_form.html', university=self._university, student=self._repo.get_by_id(student_id))
+        student = self._repo.get_by_id(student_id)
+        if student:
+            form_data = {
+                'last_name': student.last_name,
+                'first_name': student.first_name,
+                'patronymic': student.patronymic,
+                'address': student.address,
+                'phone': student.phone,
+                'min_required_facultative_hours': student.min_required_facultative_hours,
+            }
+            return render_template(
+                'student_update_form.html',
+                university=self._university,
+                student=self._repo.get_by_id(student_id),
+                form_data=form_data)
         return Controller.show_404()
 
     def update_student(self, student_id: int, request_data: dict):
