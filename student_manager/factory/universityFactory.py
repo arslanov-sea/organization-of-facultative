@@ -14,6 +14,8 @@ class UniversityFactory:
         """
         Создает репозиторий для указанного университета
         """
+        print(f"--- DEUG factory --- university_name: {university_name}")
+
         if university_name in UniversityFactory._repositories:
             return UniversityFactory._repositories[university_name]
 

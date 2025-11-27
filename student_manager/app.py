@@ -11,6 +11,11 @@ def start():
     """Главная страница со списком студентов"""
     return "hello/"
 
+# @app.route('/favicon.ico/')
+# def favicon():
+#     """Обработка favicon"""
+#     return app.send_static_file('favicon.ico')
+
 @app.route('/<university>/')
 def index(university):
     """Главная страница со списком студентов"""
