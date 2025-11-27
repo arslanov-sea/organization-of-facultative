@@ -61,12 +61,11 @@ def update_student(university, student_id):
 @app.route('/<university>/<int:student_id>/', methods=['POST'])
 def update_student_submit(university, student_id):
     """Обработка редактирования студента"""
-    students_update_controller.set_university(university)
-    try:
-        students_update_controller.update_student(student_id, request.form.to_dict())
-        return redirect(url_for('index', university=university))
-    except Exception as e:
-        return f"Ошибка при редактировании: {str(e)}", 400
+    if is_university_exist(university):
+        if university != students_update_controller.get_university():
+            students_update_controller.set_university(university)
+        return students_update_controller.update_student(student_id, request.form.to_dict())
+    return Controller.show_404()
 
 @app.route('/<university>/<int:student_id>/delete', methods=['POST'])
 def delete_student(university, student_id):

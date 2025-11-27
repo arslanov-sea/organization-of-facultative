@@ -144,7 +144,16 @@ class StudentsUpdateController(Controller):
     def update_student(self, student_id: int, request_data: dict):
         request_min_req_hours = request_data.get('min_required_facultative_hours')
         request_data['min_required_facultative_hours'] = int(request_min_req_hours)
-        self._repo.update_student(student_id, request_data)
+        try:
+            self._repo.update_student(student_id, request_data)
+            return redirect(url_for('index', university=self._university))
+        except Exception as e:
+            return render_template(
+                'student_update_form.html',
+                university=self._university,
+                student=self._repo.get_by_id(student_id),
+                form_data=request_data,
+                error=str(e))
 
 class StudentsDeleteController(Controller):
     def __init__(self, university: str | None = None):

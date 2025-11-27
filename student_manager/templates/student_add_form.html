@@ -10,11 +10,7 @@
                 <h4 class="card-title mb-0">Добавить нового студента - {{ university }}</h4>
             </div>
             <div class="card-body">
-                {% if error %}
-                <div class="alert alert-danger" role="alert">
-                    {{ error }}
-                </div>
-                {% endif %}
+
 
                 <form method="POST" action="{{ url_for('add_student_submit', university=university) }}" id="studentForm">
                     {% include "student_form.html" %}

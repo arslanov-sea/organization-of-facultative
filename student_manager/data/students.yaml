@@ -1,14 +1,21 @@
-- address: ул. Мира, д. 20, кв 1
-  first_name: Иван
-  last_name: Иванов
-  min_required_facultative_hours: 2
-  patronymic: null
-  phone: '+79991234411'
-  student_id: 1
 - address: ул. Ленина, д. 15, кв. 42
-  first_name: Сулейман
+  first_name: Dfs
   last_name: Арсланов
   min_required_facultative_hours: 2
   patronymic: Арсланбекович
   phone: '+79991234412'
+  student_id: 1
+- address: ул. Калинина, д. 19
+  first_name: Амина
+  last_name: Лукманова
+  min_required_facultative_hours: 2
+  patronymic: null
+  phone: '+79894531123'
   student_id: 2
+- address: респ. Крым, г. Севастополь, ул. Мира, д. 5
+  first_name: Иван
+  last_name: Иванов
+  min_required_facultative_hours: 1
+  patronymic: Иванович
+  phone: '+79996401964'
+  student_id: 3
