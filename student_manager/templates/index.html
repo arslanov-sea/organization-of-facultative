@@ -5,9 +5,12 @@
 {% block content %}
 <div class="row">
     <div class="col-12">
-        <h1 class="mb-4">Список студентов</h1>
-
-
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="mb-0">Список студентов</h1>
+            <a href="{{ url_for('add_student', university=university) }}" class="btn btn-primary">
+                Добавить студента
+            </a>
+        </div>
 
         {% if students %}
         <div class="table-responsive">
@@ -26,13 +29,48 @@
                 <tbody>
                     {% for student in students %}
                     <tr>
-                        <td>{{ student.student_id }}</td>
-                        <td>{{ student.last_name }}</td>
-                        <td>{{ student.first_name }}</td>
-                        <td>{{ student.patronymic or '-' }}</td>
-                        <td>{{ student.address }}</td>
-                        <td>{{ student.phone }}</td>
-                        <td>{{ student.min_required_facultative_hours }}</td>
+                        <td>
+                            <a href="{{ url_for('edit_student', university=university, student_id=student.student_id) }}"
+                               class="text-decoration-none">
+                                {{ student.student_id }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('edit_student', university=university, student_id=student.student_id) }}"
+                               class="text-decoration-none">
+                                {{ student.last_name }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('edit_student', university=university, student_id=student.student_id) }}"
+                               class="text-decoration-none">
+                                {{ student.first_name }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('edit_student', university=university, student_id=student.student_id) }}"
+                               class="text-decoration-none">
+                                {{ student.patronymic or '-' }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('edit_student', university=university, student_id=student.student_id) }}"
+                               class="text-decoration-none">
+                                {{ student.address }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('edit_student', university=university, student_id=student.student_id) }}"
+                               class="text-decoration-none">
+                                {{ student.phone }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('edit_student', university=university, student_id=student.student_id) }}"
+                               class="text-decoration-none">
+                                {{ student.min_required_facultative_hours }}
+                            </a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
