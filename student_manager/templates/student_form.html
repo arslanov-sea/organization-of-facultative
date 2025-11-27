@@ -19,7 +19,7 @@
             </div>
             <div class="card-body">
                 <form method="POST"
-                      action="{% if student %}{{ url_for('update_student', university=university, student_id=student.student_id) }}{% else %}{{ url_for('add_student_submit', university=university) }}{% endif %}"
+                      action="{% if student %}{{ url_for('update_student_submit', university=university, student_id=student.student_id) }}{% else %}{{ url_for('add_student_submit', university=university) }}{% endif %}"
                       id="studentForm">
                     <div class="row">
                         <div class="col-md-6">

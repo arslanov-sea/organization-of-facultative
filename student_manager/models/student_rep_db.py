@@ -7,7 +7,7 @@
 from typing import List
 import psycopg2
 from .student import Student
-from config import DB_HOST, DB_NAME, DB_PASSWORD, DB_USERNAME, DB_PORT
+from appconfig import DB_HOST, DB_NAME, DB_PASSWORD, DB_USERNAME, DB_PORT
 
 DB_CONFIG = {
     'db_name': DB_NAME,

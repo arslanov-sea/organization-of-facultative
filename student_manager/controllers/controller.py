@@ -40,13 +40,28 @@ class Observer:
 class StudentsListView(Observer):
     """Наблюдатель, который выводит студентов через шаблон"""
 
-    def update(self, students):
-        return render_template('index.html', students=students)
+    def __init__(self, university=None):
+        self.university = university
+
+    def update(self, data):
+        if isinstance(data, tuple) and len(data) == 2:
+            students, university = data
+            self.university = university
+        else:
+            students = data
+
+        return render_template('index.html',
+                               students=students,
+                               university=self.university)
 
 class Controller:
     def __init__(self, university: str | None):
         self._university = university
         self._repo: StudentRepository = UniversityFactory.create_repository(university) if university else None
+
+    @staticmethod
+    def show_404():
+        return render_template('not_found.html')
 
     def get_university(self) -> str | None:
         return self._university
@@ -67,14 +82,14 @@ class StudentsController(Subject, Controller):
 
     def show_list_students(self):
         if self._repo:
-            """Получить список студентов и уведомить наблюдателей"""
             students = self._repo.get_k_n_short_list(self._repo.get_count(), 1)
             print(f"Загружено студентов: {len(students)}")
 
-            results = self.notify(students)
+            data = (students, self._university)
+            results = self.notify(data)
             return results[0] if results else "No observers"
         else:
-            raise ValueError("Университет не существует (репозиторий не найден)")
+            raise ValueError("Университет не существует")
 
 
 class StudentsAddController(Controller):
@@ -83,10 +98,30 @@ class StudentsAddController(Controller):
 
     def show_add_student_form(self):
 
-        return render_template('add_form.html', university=self._university)
+        return render_template('student_form.html', university=self._university)
 
     def add_student(self, request_data: dict):
         request_min_req_hours = request_data.get('min_required_facultative_hours')
-        request_data['min_required_facultative_hours'] = int(request_min_req_hours) if request_min_req_hours else None
+        request_data['min_required_facultative_hours'] = int(request_min_req_hours)
         self._repo.add_student(request_data)
 
+class StudentsUpdateController(Controller):
+    def __init__(self, university: str | None = None):
+        super().__init__(university)
+
+    def show_update_student_form(self, student_id: int):
+        if self._repo.get_by_id(student_id):
+            return render_template('student_form.html', university=self._university, student=self._repo.get_by_id(student_id))
+        return Controller.show_404()
+
+    def update_student(self, student_id: int, request_data: dict):
+        request_min_req_hours = request_data.get('min_required_facultative_hours')
+        request_data['min_required_facultative_hours'] = int(request_min_req_hours)
+        self._repo.update_student(student_id, request_data)
+
+class StudentsDeleteController(Controller):
+    def __init__(self, university: str | None = None):
+        super().__init__(university)
+
+    def delete_student(self, student_id: int):
+        self._repo.delete_student(student_id)

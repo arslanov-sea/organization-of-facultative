@@ -1,23 +1,5 @@
 [
   {
-    "student_id": 2,
-    "first_name": "Мария",
-    "last_name": "Иванова",
-    "patronymic": "Петровна",
-    "address": "г. Санкт-Петербург, ул. Невская, д. 20",
-    "phone": "+79992223344",
-    "min_required_facultative_hours": 18
-  },
-  {
-    "student_id": 6,
-    "first_name": "Мария",
-    "last_name": "Иванова",
-    "patronymic": "Петровна",
-    "address": "г. Санкт-Петербург, ул. Невская, д. 20",
-    "phone": "+79992223344",
-    "min_required_facultative_hours": 18
-  },
-  {
     "student_id": 3,
     "first_name": "Сергей",
     "last_name": "Кузнецов",
@@ -169,68 +151,5 @@
     "address": "г. Москва, ул. Примерная, д. 1",
     "phone": "+79990000000",
     "min_required_facultative_hours": 10
-  },
-  {
-    "student_id": 20,
-    "first_name": "Иван",
-    "last_name": "Тестов",
-    "patronymic": "Сергеевич",
-    "address": "г. Москва, ул. Примерная, д. 1",
-    "phone": "+79990000000",
-    "min_required_facultative_hours": 10
-  },
-  {
-    "student_id": 21,
-    "first_name": "Иван",
-    "last_name": "Тестов",
-    "patronymic": "Сергеевич",
-    "address": "г. Москва, ул. Примерная, д. 1",
-    "phone": "+79990000000",
-    "min_required_facultative_hours": 10
-  },
-  {
-    "student_id": 22,
-    "first_name": "Иван",
-    "last_name": "Тестов",
-    "patronymic": "Сергеевич",
-    "address": "г. Москва, ул. Примерная, д. 1",
-    "phone": "+79990000000",
-    "min_required_facultative_hours": 10
-  },
-  {
-    "student_id": 23,
-    "first_name": "Иван",
-    "last_name": "Тестов",
-    "patronymic": "Сергеевич",
-    "address": "г. Москва, ул. Примерная, д. 1",
-    "phone": "+79990000000",
-    "min_required_facultative_hours": 10
-  },
-  {
-    "student_id": 24,
-    "first_name": "Сулейман",
-    "last_name": "Арсланов",
-    "patronymic": null,
-    "address": "ул. Ленина, д. 15, кв. 42",
-    "phone": "+79891231212",
-    "min_required_facultative_hours": 2
-  },
-  {
-    "student_id": 25,
-    "first_name": "Сулейман",
-    "last_name": "Арсланов",
-    "patronymic": null,
-    "address": "ул. Ленина, д. 15, кв. 42",
-    "phone": "+79891231299",
-    "min_required_facultative_hours": 2
-  },
-  {
-    "student_id": 26,
-    "first_name": "Сулейман",
-    "last_name": "Арсланов",
-    "patronymic": null,
-    "address": "ул. Ленина, д. 15, кв. 42",
-    "phone": "+79891231298",
-    "min_required_facultative_hours": 2
   }
 ]

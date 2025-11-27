@@ -1,7 +1,7 @@
 from models.student_repository import StudentRepJson, StudentRepYaml
 from models.student_rep_db import StudentRepDB
 from models.student_rep_db_adapter import StudentRepDBAdapter
-import config
+import appconfig
 
 
 class UniversityFactory:
@@ -20,9 +20,9 @@ class UniversityFactory:
             return UniversityFactory._repositories[university_name]
 
         if university_name == "kubsu":
-            repo = StudentRepJson(config.JSON_DATA_FILE_PATH)
+            repo = StudentRepJson(appconfig.JSON_DATA_FILE_PATH)
         elif university_name == "kubstu":
-            repo = StudentRepYaml(config.YAML_DATA_FILE_PATH)
+            repo = StudentRepYaml(appconfig.YAML_DATA_FILE_PATH)
         elif university_name == "kubsau":
             db_repo = StudentRepDB()
             repo = StudentRepDBAdapter(db_repo)
