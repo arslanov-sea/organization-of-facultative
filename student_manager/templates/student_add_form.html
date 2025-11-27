@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить студента - {{ university }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">Добавить нового студента - {{ university }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('add_student_submit', university=university) }}" id="studentForm">
+                    {% include "student_form.html" %}
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('index', university=university) }}" class="btn btn-secondary me-md-2">
+                            Отмена
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            Добавить студента
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

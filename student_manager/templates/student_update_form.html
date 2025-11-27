@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Редактирование студента - {{ university }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">Редактирование студента - {{ university }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('update_student_submit', university=university, student_id=student.student_id) }}" id="studentForm">
+                    {% include "student_form.html" %}
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('index', university=university) }}" class="btn btn-secondary me-md-2">
+                            Отмена
+                        </a>
+                        <button type="submit" formaction="{{ url_for('delete_student', university=university, student_id=student.student_id) }}"
+                                formmethod="POST" class="btn btn-danger me-md-2"
+                                onclick="return confirm('Вы уверены, что хотите удалить этого студента?')">
+                            Удалить
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Обновить
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

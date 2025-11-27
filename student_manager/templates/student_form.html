@@ -1,94 +1,44 @@
-{% extends "base.html" %}
-
-{% block title %}
-    {% if student %}Редактирование студента{% else %}Добавить студента{% endif %} - {{ university }}
-{% endblock %}
-
-{% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h4 class="card-title mb-0">
-                    {% if student %}
-                        Редактирование студента - {{ university }}
-                    {% else %}
-                        Добавить нового студента - {{ university }}
-                    {% endif %}
-                </h4>
-            </div>
-            <div class="card-body">
-                <form method="POST"
-                      action="{% if student %}{{ url_for('update_student_submit', university=university, student_id=student.student_id) }}{% else %}{{ url_for('add_student_submit', university=university) }}{% endif %}"
-                      id="studentForm">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="last_name" class="form-label">Фамилия *</label>
-                                <input type="text" class="form-control" id="last_name" name="last_name"
-                                       value="{{ student.last_name if student else '' }}" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="first_name" class="form-label">Имя *</label>
-                                <input type="text" class="form-control" id="first_name" name="first_name"
-                                       value="{{ student.first_name if student else '' }}" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="patronymic" class="form-label">Отчество</label>
-                        <input type="text" class="form-control" id="patronymic" name="patronymic"
-                               value="{{ student.patronymic if student else '' }}">
-                        <div class="form-text">Необязательное поле</div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="address" class="form-label">Адрес *</label>
-                        <textarea class="form-control" id="address" name="address" rows="3" required>{{ student.address if student else '' }}</textarea>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="phone" class="form-label">Телефон *</label>
-                        <input type="tel" class="form-control" id="phone" name="phone"
-                               value="{{ student.phone if student else '' }}" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="min_required_facultative_hours" class="form-label">
-                            Минимальное количество факультативных часов
-                        </label>
-                        <input type="number" class="form-control" id="min_required_facultative_hours"
-                               name="min_required_facultative_hours" min="0" step="1"
-                               value="{{ student.min_required_facultative_hours if student and student.min_required_facultative_hours else '' }}">
-                        <div class="form-text">Необязательное поле. Введите целое число</div>
-                    </div>
-
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="{{ url_for('index', university=university) }}" class="btn btn-secondary me-md-2">
-                            Отмена
-                        </a>
-
-                        {% if student %}
-                        <button type="submit" formaction="{{ url_for('delete_student', university=university, student_id=student.student_id) }}"
-                                formmethod="POST" class="btn btn-danger me-md-2"
-                                onclick="return confirm('Вы уверены, что хотите удалить этого студента?')">
-                            Удалить
-                        </button>
-                        <button type="submit" class="btn btn-primary">
-                            Обновить
-                        </button>
-                        {% else %}
-                        <button type="submit" class="btn btn-primary">
-                            Добавить студента
-                        </button>
-                        {% endif %}
-                    </div>
-                </form>
-            </div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="mb-3">
+            <label for="last_name" class="form-label">Фамилия *</label>
+            <input type="text" class="form-control" id="last_name" name="last_name"
+                   value="{{ student.last_name if student else '' }}" required>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="mb-3">
+            <label for="first_name" class="form-label">Имя *</label>
+            <input type="text" class="form-control" id="first_name" name="first_name"
+                   value="{{ student.first_name if student else '' }}" required>
         </div>
     </div>
 </div>
-{% endblock %}
+
+<div class="mb-3">
+    <label for="patronymic" class="form-label">Отчество</label>
+    <input type="text" class="form-control" id="patronymic" name="patronymic"
+           value="{{ student.patronymic if student else '' }}">
+    <div class="form-text">Необязательное поле</div>
+</div>
+
+<div class="mb-3">
+    <label for="address" class="form-label">Адрес *</label>
+    <textarea class="form-control" id="address" name="address" rows="3" required>{{ student.address if student else '' }}</textarea>
+</div>
+
+<div class="mb-3">
+    <label for="phone" class="form-label">Телефон *</label>
+    <input type="tel" class="form-control" id="phone" name="phone"
+           value="{{ student.phone if student else '' }}" required>
+</div>
+
+<div class="mb-3">
+    <label for="min_required_facultative_hours" class="form-label">
+        Минимальное количество факультативных часов
+    </label>
+    <input type="number" class="form-control" id="min_required_facultative_hours"
+           name="min_required_facultative_hours" min="0" step="1"
+           value="{{ student.min_required_facultative_hours if student and student.min_required_facultative_hours else '' }}">
+    <div class="form-text">Необязательное поле. Введите целое число</div>
+</div>

@@ -5,13 +5,6 @@
   patronymic: null
   phone: '+79992223344'
   student_id: 2
-- address: г. Казань, ул. Кремлевская, д. 20
-  first_name: Алексей
-  last_name: Иванов
-  min_required_facultative_hours: 22
-  patronymic: Сергеевич
-  phone: '+79994445566'
-  student_id: 4
 - address: г. Москва, ул. Ленина, д. 10
   first_name: Борис
   last_name: Петров
@@ -21,9 +14,9 @@
   student_id: 1
 - address: г. Новосибирск, ул. Советская, д. 25
   first_name: Ольга
-  last_name: Петрова
+  last_name: Аль
   min_required_facultative_hours: 16
-  patronymic: null
+  patronymic: None
   phone: '+79995556677'
   student_id: 5
 - address: г. Екатеринбург, ул. Мира, д. 15
@@ -124,3 +117,17 @@
   patronymic: Сергеевич
   phone: '+79990000000'
   student_id: 18
+- address: ул. Мира, д. 20, кв 1
+  first_name: Ольга
+  last_name: Кузнецов
+  min_required_facultative_hours: 16
+  patronymic: None
+  phone: '+79995556122'
+  student_id: 19
+- address: ул. Мира, д. 20, кв 1
+  first_name: Ольга
+  last_name: Кузнецов
+  min_required_facultative_hours: 16
+  patronymic: None
+  phone: '+79995556196'
+  student_id: 20

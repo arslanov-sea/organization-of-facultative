@@ -3,6 +3,7 @@ from models.student_repository import StudentRepository, Student
 from factory.universityFactory import UniversityFactory
 from typing import List
 from flask import request, redirect, url_for
+from appconfig import UNIVERSITIES
 
 
 class Subject:
@@ -63,6 +64,11 @@ class Controller:
     def show_404():
         return render_template('not_found.html')
 
+    @staticmethod
+    def show_start():
+        universities = UNIVERSITIES
+        return render_template('start.html', universities=universities)
+
     def get_university(self) -> str | None:
         return self._university
 
@@ -98,12 +104,15 @@ class StudentsAddController(Controller):
 
     def show_add_student_form(self):
 
-        return render_template('student_form.html', university=self._university)
+        return render_template('student_add_form.html', university=self._university)
 
     def add_student(self, request_data: dict):
+
         request_min_req_hours = request_data.get('min_required_facultative_hours')
         request_data['min_required_facultative_hours'] = int(request_min_req_hours)
         self._repo.add_student(request_data)
+        return redirect(url_for('index', university=self._university))
+
 
 class StudentsUpdateController(Controller):
     def __init__(self, university: str | None = None):
@@ -111,7 +120,7 @@ class StudentsUpdateController(Controller):
 
     def show_update_student_form(self, student_id: int):
         if self._repo.get_by_id(student_id):
-            return render_template('student_form.html', university=self._university, student=self._repo.get_by_id(student_id))
+            return render_template('student_update_form.html', university=self._university, student=self._repo.get_by_id(student_id))
         return Controller.show_404()
 
     def update_student(self, student_id: int, request_data: dict):

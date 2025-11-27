@@ -15,7 +15,7 @@ def is_university_exist(university):
 @app.route('/')
 def start():
     """Главная страница со списком студентов"""
-    return "hello/"
+    return Controller.show_start()
 
 @app.route('/favicon.ico/')
 def favicon():
@@ -46,7 +46,7 @@ def add_student_submit(university):
     if is_university_exist(university):
         if university != students_add_controller.get_university():
             students_add_controller.set_university(university)
-        return students_add_controller.show_add_student_form()
+        return students_add_controller.add_student(request.form.to_dict())
     return Controller.show_404()
 
 @app.route('/<university>/<int:student_id>/')
