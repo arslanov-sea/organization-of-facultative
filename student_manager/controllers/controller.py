@@ -4,7 +4,8 @@ from models.decorators import StudentRepFilterSortDecorator
 from factory.universityFactory import UniversityFactory
 from typing import List
 from flask import request, redirect, url_for
-from appconfig import UNIVERSITIES
+from appconfig import UNIVERSITIES, DEFAULT_PAGE_SIZE
+from math import ceil
 
 
 class Subject:
@@ -46,15 +47,17 @@ class StudentsListView(Observer):
         self.university = university
 
     def update(self, data):
-        if isinstance(data, tuple) and len(data) == 2:
-            students, university = data
+        if isinstance(data, tuple) and len(data) == 3:
+            students, university, page_cnt = data
             self.university = university
         else:
-            students = data
+            # ...
+            return 'error'
 
         return render_template('index.html',
                                students=students,
-                               university=self.university)
+                               university=self.university,
+                               page_cnt=page_cnt)
 
 class Controller:
     def __init__(self, university: str | None):
@@ -134,11 +137,18 @@ class StudentsController(Subject, Controller):
                     decorated_repo.sort_key = sort_key
                     decorated_repo.reverse = (sort_order == 'desc')
 
-            count = decorated_repo.get_count()
-            students = decorated_repo.get_k_n_short_list(count, 1)
+            # count = decorated_repo.get_count()
+            count = DEFAULT_PAGE_SIZE
+            page_cnt = ceil(decorated_repo.get_count() / DEFAULT_PAGE_SIZE)
+
+            if request.args.get('page'):
+                page = int(request.args.get('page'))
+            else:
+                page = 1
+            students = decorated_repo.get_k_n_short_list(count, page)
             print(f"Загружено студентов после фильтрации: {len(students)}")
 
-            data = (students, self._university)
+            data = (students, self._university, page_cnt)
             results = self.notify(data)
             return results[0] if results else "No observers"
         else:

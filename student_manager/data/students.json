@@ -1,0 +1,11 @@
+[
+  {
+    "student_id": 1,
+    "first_name": "Сулейман",
+    "last_name": "Арсланов",
+    "patronymic": null,
+    "address": "ул. Ленина, д. 15, кв. 42",
+    "phone": "+79991231212",
+    "min_required_facultative_hours": 22
+  }
+]

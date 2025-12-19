@@ -186,6 +186,12 @@ class StudentRepDB:
 
     def add_student(self, student_data: dict) -> Student:
         """Добавляет нового студента и возвращает созданный объект."""
+        Student.validate_name(student_data['first_name'])
+        Student.validate_name(student_data['last_name'])
+        Student.validate_name(student_data.get('patronymic'), is_patronymic=True)
+        Student.validate_address(student_data['address'])
+        Student.validate_phone(student_data['phone'])
+        Student.validate_min_required_facultative_hours(student_data.get('min_required_facultative_hours', 0))
         try:
             new_id = self._db.execute_insert("""
                 INSERT INTO students (first_name, last_name, patronymic, 
@@ -217,6 +223,12 @@ class StudentRepDB:
 
     def update_student(self, student_id: int, student_data: dict) -> Student | None:
         """Обновляет данные студента и возвращает обновленный объект."""
+        Student.validate_name(student_data['first_name'])
+        Student.validate_name(student_data['last_name'])
+        Student.validate_name(student_data.get('patronymic'), is_patronymic=True)
+        Student.validate_address(student_data['address'])
+        Student.validate_phone(student_data['phone'])
+        Student.validate_min_required_facultative_hours(student_data.get('min_required_facultative_hours', 0))
         try:
             rows_affected = self._db.execute_update("""
                 UPDATE students 

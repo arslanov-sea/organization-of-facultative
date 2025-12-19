@@ -26,3 +26,17 @@
   patronymic: Арсланбекович
   phone: '+79996401991'
   student_id: 4
+- address: ул. Калинина, д. 19
+  first_name: Петр
+  last_name: Иванов
+  min_required_facultative_hours: 3
+  patronymic: Иванович
+  phone: '+79997771956'
+  student_id: 5
+- address: ул. Ленина, д. 15, кв. 42
+  first_name: Иван
+  last_name: Иванов
+  min_required_facultative_hours: 3
+  patronymic: null
+  phone: '+79899816477'
+  student_id: 6

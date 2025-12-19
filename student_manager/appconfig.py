@@ -12,3 +12,5 @@ UNIVERSITIES = {
     "kubstu": "kubstu",
     "kubsau": "kubsau",
 }
+
+DEFAULT_PAGE_SIZE = 5
